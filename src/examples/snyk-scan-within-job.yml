@@ -1,0 +1,21 @@
+description: |
+  Invoke and run the snyk-scan orb within a build job.
+usage:
+  version: 2.1
+
+  orbs:
+    snyk-scan: mikomraz/snyk-scan@dev:master
+
+  jobs:
+    build:
+      docker:
+        - image: circleci/node:4.8.2
+      steps:
+        - checkout
+        - run:
+            command: npm install -q
+        - snyk-scan/scan:
+            severity: high
+            failOnIssues: true
+            monitorOnBuild: true
+            targetFile: "package.json"

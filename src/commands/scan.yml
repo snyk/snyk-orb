@@ -1,0 +1,50 @@
+description: Download the snyk cli static binary
+parameters:
+  # token:
+  #   description: The Snyk API Token
+  #   type: string
+  severity:
+    description: Only report vulnerabilities of provided level or higher (low/medium/high). Default is low.
+    type: enum
+    enum: ["low", "medium", "high"]
+    default: "low"
+  failOnIssues:
+    description: This specifies if builds should be failed or continued based on issues found by Snyk.
+    type: boolean
+    default: true
+  monitorOnBuild:
+    description: Take a current application dependencies snapshot for continuous monitoring by Snyk, if test was succesful.
+    type: boolean
+    default: true
+  targetFile:
+    description: The path to the manifest file to be used by Snyk.
+    type: string
+    default: ""
+  additionalArguments:
+    description: Refer to the Snyk CLI help page for information on additional arguments.
+    type: string
+    default: ""
+  version:
+    description: The CLI version to download
+    type: string
+    default: "1.179.0"
+  os:
+    description: The CLI OS version to download
+    type: enum
+    enum: ["linux", "macos"]
+    default: "linux"
+steps:
+  - install:
+      version: <<parameters.version>>
+      os: <<parameters.os>>
+  - test:
+      severity: <<parameters.severity>>
+      failOnIssues: <<parameters.failOnIssues>>
+      targetFile: <<parameters.targetFile>>
+      additionalArguments: <<parameters.additionalArguments>>
+  - when:
+      condition: <<parameters.monitorOnBuild>>
+      steps:
+        - monitor:
+            targetFile: <<parameters.targetFile>>
+            additionalArguments: <<parameters.additionalArguments>>

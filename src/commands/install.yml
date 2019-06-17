@@ -1,0 +1,17 @@
+description: Download the snyk cli static binary
+parameters:
+  version:
+    description: The CLI version to download
+    type: string
+    default: "1.179.0"
+  os:
+    description: The CLI OS version to download
+    type: enum
+    enum: ["linux", "macos"]
+    default: "linux"
+steps:
+  - run: 
+      name: Download Snyk CLI
+      command: |
+        curl -Lo /tmp/snyk "https://github.com/snyk/snyk/releases/download/v<<parameters.version>>/snyk-<<parameters.os>>"
+        chmod a+x /tmp/snyk

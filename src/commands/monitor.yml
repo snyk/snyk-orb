@@ -1,0 +1,17 @@
+description: Download the snyk cli static binary
+parameters:
+  targetFile:
+    description: The path to the manifest file to be used by Snyk.
+    type: string
+    default: ""
+  additionalArguments:
+    description: Refer to the Snyk CLI help page for information on additional arguments.
+    type: string
+    default: ""
+steps:
+  - run:
+      name: "Run Snyk Monitor for continuous monitoring on snyk.io"
+      command: |
+        /tmp/snyk monitor ${SNYK_PROJECT:+--project-name=$SNYK_PROJECT} ${SNYK_ORGANIZATION:+--org=$SNYK_ORGANIZATION} ${SNYK_TARGET_FILE:+--file=$SNYK_TARGET_FILE} <<parameters.additionalArguments>>
+      environment:
+        SNYK_TARGET_FILE: <<parameters.targetFile>>
