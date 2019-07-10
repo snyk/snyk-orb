@@ -24,10 +24,6 @@ parameters:
     description: Refer to the Snyk CLI help page for information on additional arguments.
     type: string
     default: ""
-  version:
-    description: The CLI version to download
-    type: string
-    default: "1.179.0"
   os:
     description: The CLI OS version to download
     type: enum
