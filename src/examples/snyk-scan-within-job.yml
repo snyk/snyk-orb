@@ -4,7 +4,7 @@ usage:
   version: 2.1
 
   orbs:
-    snyk-scan: mikomraz/snyk-scan@dev:master
+    snyk: snyk/snyk@x.y.z
 
   jobs:
     build:
@@ -14,7 +14,7 @@ usage:
         - checkout
         - run:
             command: npm install -q
-        - snyk-scan/scan:
+        - snyk/scan:
             severity: high
             failOnIssues: true
             monitorOnBuild: true

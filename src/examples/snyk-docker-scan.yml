@@ -4,7 +4,7 @@ usage:
   version: 2.1
 
   orbs:
-    snyk-scan: mikomraz/snyk-scan@dev:master
+    snyk: snyk/snyk@x.y.z
 
   jobs:
     build:
@@ -18,7 +18,7 @@ usage:
         - run:
             name: Build Docker image
             command: docker build -t $IMAGE_NAME:latest .
-        - snyk-scan/scan:
+        - snyk/scan:
             dockerImageName: $IMAGE_NAME:latest
             targetFile: "Dockerfile"
             severity: high

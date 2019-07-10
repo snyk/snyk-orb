@@ -13,7 +13,7 @@ workflows:
 
       - orb-tools/publish:
           orb-path: packed/orb.yml
-          orb-ref: "snyk/snyk-scan@dev:${CIRCLE_BRANCH}"
+          orb-ref: "snyk/snyk@dev:${CIRCLE_BRANCH}"
           publish-token-variable: "$CIRCLECI_API_TOKEN"
           attach-workspace: true
           checkout: false
@@ -21,7 +21,7 @@ workflows:
 
       - orb-tools/increment:
           orb-path: packed/orb.yml
-          orb-ref: "snyk/snyk-scan"
+          orb-ref: "snyk/snyk"
           segment: "patch"
           publish-token-variable: "$CIRCLECI_API_TOKEN"
           attach-workspace: true
