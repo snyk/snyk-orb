@@ -1,5 +1,5 @@
 description: |
-  Invoke and run the snyk-scan orb within a build job.
+  Use the Snyk orb inside a build job to scan the application dependencies for known vulnerabilities
 usage:
   version: 2.1
 

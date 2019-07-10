@@ -1,8 +1,5 @@
-description: Download the snyk cli static binary
+description: Scan the application dependencies for known vulnerabilities with Snyk
 parameters:
-  # token:
-  #   description: The Snyk API Token
-  #   type: string
   severity:
     description: Only report vulnerabilities of provided level or higher (low/medium/high). Default is low.
     type: enum
@@ -20,6 +17,10 @@ parameters:
     description: The path to the manifest file to be used by Snyk.
     type: string
     default: ""
+  dockerImageName:
+    description: The image name, if scanning a container image
+    type: string
+    default: ""
   additionalArguments:
     description: Refer to the Snyk CLI help page for information on additional arguments.
     type: string
@@ -31,16 +32,17 @@ parameters:
     default: "linux"
 steps:
   - install:
-      version: <<parameters.version>>
       os: <<parameters.os>>
   - test:
       severity: <<parameters.severity>>
       failOnIssues: <<parameters.failOnIssues>>
       targetFile: <<parameters.targetFile>>
+      dockerImageName: <<parameters.dockerImageNametFile>>
       additionalArguments: <<parameters.additionalArguments>>
   - when:
       condition: <<parameters.monitorOnBuild>>
       steps:
         - monitor:
             targetFile: <<parameters.targetFile>>
+            dockerImageName: <<parameters.dockerImageNametFile>>
             additionalArguments: <<parameters.additionalArguments>>

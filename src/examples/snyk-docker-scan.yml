@@ -1,0 +1,26 @@
+description: |
+  Use the Snyk orb inside a build job to scan a Docker image for known vulnerabilities
+usage:
+  version: 2.1
+
+  orbs:
+    snyk-scan: mikomraz/snyk-scan@dev:master
+
+  jobs:
+    build:
+      environment:
+        IMAGE_NAME: myrepo/myapp
+      docker:
+          - image: circleci/buildpack-deps:stretch
+      steps:
+        - checkout
+        - setup_remote_docker
+        - run:
+            name: Build Docker image
+            command: docker build -t $IMAGE_NAME:latest .
+        - snyk-scan/scan:
+            dockerImageName: $IMAGE_NAME:latest
+            targetFile: "Dockerfile"
+            severity: high
+            failOnIssues: true
+            monitorOnBuild: true
