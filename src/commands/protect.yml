@@ -8,4 +8,4 @@ steps:
   - run:
       name: "Run Snyk Protect to apply patches from .snyk file"
       command: |
-        /tmp/snyk protect <<parameters.additionalArguments>>
+        snyk protect <<parameters.additionalArguments>>
