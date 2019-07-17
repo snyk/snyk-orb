@@ -5,6 +5,14 @@ parameters:
     type: enum
     enum: ["linux", "macos"]
     default: "linux"
+  token-variable:
+    description: >
+      Name of env var containing your Snyk API token. Pass this as a raw string such
+      as CIRCLECI_SNYK_TOKEN. Do not paste the actual token into your
+      configuration. If omitted it's assumed the CLI has already been setup
+      with a valid token.
+    type: env_var_name
+    default: SNYK_TOKEN
 steps:
   - run: 
       name: Download Snyk CLI
@@ -16,3 +24,4 @@ steps:
           sudo chmod +x /usr/local/bin/snyk
         fi
         snyk config set disableSuggestions=true
+        <<#parameters.token-variable>>snyk auth $<<parameters.token-variable>><</parameters.token-variable>>
