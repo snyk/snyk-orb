@@ -1,5 +1,5 @@
 description: |
-  Use the Snyk orb inside a build job to scan the application dependencies for known vulnerabilities
+  Advanced example of scanning the application dependencies, with customized behaviour
 usage:
   version: 2.1
 
@@ -12,11 +12,10 @@ usage:
         - image: circleci/node:4.8.2
       steps:
         - checkout
-        - run:
-            command: npm install -q
+        - run: npm install -q
         - snyk/scan:
             token-variable: SNYK_TOKEN
             severity: high
-            failOnIssues: true
+            failOnIssues: false
             monitorOnBuild: true
             project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-app
