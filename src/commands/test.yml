@@ -1,4 +1,4 @@
-description: Test the application dependencies for known vulnerabilities
+description: Test the application dependencies for known vulnerabilities. Runs as part of the scan command.
 parameters:
   severity:
     description: Only report vulnerabilities of provided level or higher (low/medium/high). Default is low.

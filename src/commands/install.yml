@@ -1,4 +1,4 @@
-description: Download the Snyk CLI
+description: Download the Snyk CLI. Runs as part of the scan command.
 parameters:
   os:
     description: The CLI OS version to download

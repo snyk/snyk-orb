@@ -1,4 +1,4 @@
-description: Scan the application dependencies for known vulnerabilities with Snyk
+description: Scan the application dependencies for known vulnerabilities with Snyk. This command calls the others, and should be used as the command for scanning.
 parameters:
   severity:
     description: Only report vulnerabilities of provided level or higher (low/medium/high). Default is low.

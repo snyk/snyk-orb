@@ -1,4 +1,4 @@
-description: Apply the patches specified in your .snyk file to the app (After running Snyk Wizard).
+description: Apply the patches specified in your .snyk file to the app (After running Snyk Wizard). Runs as part of the scan command.
 parameters:
   additionalArguments:
     description: Refer to the Snyk CLI help page for information on additional arguments.
