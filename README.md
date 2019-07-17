@@ -32,10 +32,8 @@ version: 2.1
         - image: circleci/node:4.8.2
       steps:
         - checkout
-        - run:
-            command: npm install -q
-        - snyk/scan:
-            token-variable: SNYK_TOKEN
+        - run: npm install -q
+        - snyk/scan
 ```
 
 ### Scan Docker Image
@@ -92,6 +90,8 @@ build:
 
 ## Orb Parameters
 
+Full reference docs https://circleci.com/orbs/registry/snyk/snyk
+
 | Parameter  | Description | Required | Default | Type |
 | -----------| -------------------------------------------------------------------------------------------------------- | ------------- | ------------- | ------------- |
 | token-variable | Name of env var containing your Snyk API token | no | SNYK_TOKEN | env_var_name |
@@ -105,8 +105,6 @@ build:
 | project | A custom name for the Snyk project to be created on snyk.io | no | - | string |
 | additionalArguments | Refer to the Snyk CLI help page for information on additional arguments | no | - | string |
 | os | The CLI OS version to download | no | linux | enum: linux|macos |
-
-Full reference docs https://circleci.com/orbs/registry/snyk/snyk
 
 ## Screenshots
 
