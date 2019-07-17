@@ -8,6 +8,18 @@ parameters:
     description: The image name, if scanning a container image
     type: string
     default: ""
+  organization: 
+    description: >
+      Name of the Snyk organisation name, under which this project should be tested and monitored
+      If omitted the default organization will be used.
+    type: string
+    default: ""
+  project:
+    description: >
+      A custom name for the Snyk project to be created on snyk.io.
+      If omitted a default-generated project name will be used.
+    type: string
+    default: ""
   additionalArguments:
     description: Refer to the Snyk CLI help page for information on additional arguments.
     type: string
@@ -15,8 +27,11 @@ parameters:
 steps:
   - run:
       name: "Run Snyk Monitor for continuous monitoring on snyk.io"
-      command: |
-        snyk monitor ${SNYK_DOCKER_IMAGE:+--docker $SNYK_DOCKER_IMAGE} ${SNYK_PROJECT:+--project-name=$SNYK_PROJECT} ${SNYK_ORGANIZATION:+--org=$SNYK_ORGANIZATION} ${SNYK_TARGET_FILE:+--file=$SNYK_TARGET_FILE} <<parameters.additionalArguments>>
-      environment:
-        SNYK_TARGET_FILE: <<parameters.targetFile>>
-        SNYK_DOCKER_IMAGE: <<parameters.dockerImageName>>
+      command: >
+        snyk monitor 
+        <<#parameters.dockerImageName>>--docker <<parameters.dockerImageName>><</parameters.dockerImageName>>
+        <<#parameters.project>>--project-name=<<parameters.project>><</parameters.project>>
+        <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
+        <<#parameters.targetFile>>--file=<<parameters.targetFile>><</parameters.targetFile>>
+        <<parameters.additionalArguments>>
+
