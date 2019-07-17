@@ -1,5 +1,12 @@
-description: Scan the application dependencies for known vulnerabilities with Snyk
+description: Scan the application dependencies for known vulnerabilities with Snyk. This command calls the others, and should be used as the command for scanning.
 parameters:
+  token-variable:
+    description: >
+      Name of env var containing your Snyk API token. Pass this as a raw string such as CICD_SNYK_TOKEN.
+      Do not paste the actual token into your configuration.
+      If omitted it's assumed the CLI has already been setup with a valid token beforehand.
+    type: env_var_name
+    default: SNYK_TOKEN
   severity:
     description: Only report vulnerabilities of provided level or higher (low/medium/high). Default is low.
     type: enum
@@ -18,11 +25,23 @@ parameters:
     type: boolean
     default: true
   targetFile:
-    description: The path to the manifest file to be used by Snyk.
+    description: The path to the manifest file to be used by Snyk. Should be provided if non-standard.
     type: string
     default: ""
   dockerImageName:
     description: The image name, if scanning a container image
+    type: string
+    default: ""
+  organization: 
+    description: >
+      Name of the Snyk organisation name, under which this project should be tested and monitored
+      If omitted the default organization will be used.
+    type: string
+    default: ""
+  project:
+    description: >
+      A custom name for the Snyk project to be created on snyk.io.
+      If omitted a default-generated project name will be used.
     type: string
     default: ""
   additionalArguments:
@@ -37,6 +56,7 @@ parameters:
 steps:
   - install:
       os: <<parameters.os>>
+      token-variable: <<parameters.token-variable>>
   - when:
       condition: <<parameters.protect>>
       steps:
@@ -47,6 +67,7 @@ steps:
       failOnIssues: <<parameters.failOnIssues>>
       targetFile: <<parameters.targetFile>>
       dockerImageName: <<parameters.dockerImageName>>
+      organization: <<parameters.organization>>
       additionalArguments: <<parameters.additionalArguments>>
   - when:
       condition: <<parameters.monitorOnBuild>>
@@ -54,4 +75,6 @@ steps:
         - monitor:
             targetFile: <<parameters.targetFile>>
             dockerImageName: <<parameters.dockerImageName>>
+            organization: <<parameters.organization>>
+            project: <<parameters.project>>
             additionalArguments: <<parameters.additionalArguments>>
