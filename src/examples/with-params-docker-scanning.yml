@@ -1,5 +1,5 @@
 description: |
-  Use the Snyk orb inside a build job to scan a container image for known vulnerabilities
+  Advanced example of scanning a container image, with customized behaviour
 usage:
   version: 2.1
 
@@ -23,6 +23,6 @@ usage:
             dockerImageName: $IMAGE_NAME:latest
             targetFile: "Dockerfile"
             severity: high
-            failOnIssues: true
+            failOnIssues: false
             monitorOnBuild: true
             project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-container
