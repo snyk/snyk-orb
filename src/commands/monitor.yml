@@ -1,4 +1,4 @@
-description: Record a snapshot of the application dependencies on snyk.io, for continueous monitoring and alerts
+description: Record a snapshot of the application dependencies on snyk.io, for continueous monitoring and alerts. Runs as part of the scan command.
 parameters:
   targetFile:
     description: The path to the manifest file to be used by Snyk.
