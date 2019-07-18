@@ -1,10 +1,10 @@
 description: Record a snapshot of the application dependencies on snyk.io, for continueous monitoring and alerts. Runs as part of the scan command.
 parameters:
-  targetFile:
+  target-file:
     description: The path to the manifest file to be used by Snyk.
     type: string
     default: ""
-  dockerImageName:
+  docker-image-name:
     description: The image name, if scanning a container image
     type: string
     default: ""
@@ -20,7 +20,7 @@ parameters:
       If omitted a default-generated project name will be used.
     type: string
     default: ""
-  additionalArguments:
+  additional-arguments:
     description: Refer to the Snyk CLI help page for information on additional arguments.
     type: string
     default: ""
@@ -29,9 +29,9 @@ steps:
       name: "Run Snyk Monitor for continuous monitoring on snyk.io"
       command: >
         snyk monitor 
-        <<#parameters.dockerImageName>>--docker <<parameters.dockerImageName>><</parameters.dockerImageName>>
+        <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
         <<#parameters.project>>--project-name=<<parameters.project>><</parameters.project>>
         <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
-        <<#parameters.targetFile>>--file=<<parameters.targetFile>><</parameters.targetFile>>
-        <<parameters.additionalArguments>>
+        <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
+        <<parameters.additional-arguments>>
 

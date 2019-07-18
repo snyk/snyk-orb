@@ -1,19 +1,19 @@
 description: Test the application dependencies for known vulnerabilities. Runs as part of the scan command.
 parameters:
-  severity:
+  severity-threshold:
     description: Only report vulnerabilities of provided level or higher (low/medium/high). Default is low.
     type: enum
     enum: ["low", "medium", "high"]
     default: "low"
-  failOnIssues:
+  fail-on-issues:
     description: This specifies if builds should be failed or continued based on issues found by Snyk.
     type: boolean
     default: true
-  targetFile:
+  target-file:
     description: The path to the manifest file to be used by Snyk.
     type: string
     default: ""
-  dockerImageName:
+  docker-image-name:
     description: The image name, if scanning a container image
     type: string
     default: ""
@@ -23,7 +23,7 @@ parameters:
       If omitted the default organization will be used.
     type: string
     default: ""
-  additionalArguments:
+  additional-arguments:
     description: Refer to the Snyk CLI help page for information on additional arguments.
     type: string
     default: ""
@@ -32,11 +32,11 @@ steps:
       name: "Run Snyk Test to scan app for vulnerabilities"
       command: >
         snyk test 
-        <<#parameters.dockerImageName>>--docker <<parameters.dockerImageName>><</parameters.dockerImageName>>
-        <<#parameters.severity>>--severity-threshold=<<parameters.severity>><</parameters.severity>>
+        <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
+        <<#parameters.severity-threshold>>--severity-threshold=<<parameters.severity-threshold>><</parameters.severity-threshold>>
         <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
-        <<#parameters.targetFile>>--file=<<parameters.targetFile>><</parameters.targetFile>>
-        <<parameters.additionalArguments>>
-        <<^parameters.failOnIssues>> || true<</parameters.failOnIssues>>
+        <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
+        <<parameters.additional-arguments>>
+        <<^parameters.fail-on-issues>> || true<</parameters.fail-on-issues>>
 
 
