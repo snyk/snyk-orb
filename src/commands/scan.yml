@@ -54,27 +54,47 @@ parameters:
     enum: ["linux", "macos"]
     default: "linux"
 steps:
-  - install:
-      os: <<parameters.os>>
-      token-variable: <<parameters.token-variable>>
+  # install snyk
+  - run: 
+      name: Download Snyk CLI
+      command: |
+        if [[ ! -x "/usr/local/bin/snyk" ]]; then
+          curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url" | grep <<parameters.os>> | cut -d '"' -f 4 | wget -qi -
+          sha256sum -c snyk-<<parameters.os>>.sha256
+          sudo mv snyk-<<parameters.os>> /usr/local/bin/snyk
+          sudo chmod +x /usr/local/bin/snyk
+        fi
+        snyk config set disableSuggestions=true
+        <<#parameters.token-variable>>snyk auth $<<parameters.token-variable>><</parameters.token-variable>>
+  # snyk protect
   - when:
       condition: <<parameters.protect>>
       steps:
-        - protect:
-            additional-arguments: <<parameters.additional-arguments>>
-  - test:
-      severity-threshold: <<parameters.severity-threshold>>
-      fail-on-issues: <<parameters.fail-on-issues>>
-      target-file: <<parameters.target-file>>
-      docker-image-name: <<parameters.docker-image-name>>
-      organization: <<parameters.organization>>
-      additional-arguments: <<parameters.additional-arguments>>
+        - run:
+            name: "Run Snyk protect to apply patches from .snyk file"
+            command: |
+              snyk protect <<parameters.additional-arguments>>
+  # snyk test
+  - run:
+      name: "Run Snyk test to scan app for vulnerabilities"
+      command: >
+        snyk test 
+        <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
+        <<#parameters.severity-threshold>>--severity-threshold=<<parameters.severity-threshold>><</parameters.severity-threshold>>
+        <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
+        <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
+        <<parameters.additional-arguments>>
+        <<^parameters.fail-on-issues>> || true<</parameters.fail-on-issues>>
+  # snyk monitor
   - when:
       condition: <<parameters.monitor-on-build>>
       steps:
-        - monitor:
-            target-file: <<parameters.target-file>>
-            docker-image-name: <<parameters.docker-image-name>>
-            organization: <<parameters.organization>>
-            project: <<parameters.project>>
-            additional-arguments: <<parameters.additional-arguments>>
+        - run:
+            name: "Run Snyk monitor for continuous monitoring on snyk.io"
+            command: >
+              snyk monitor 
+              <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
+              <<#parameters.project>>--project-name=<<parameters.project>><</parameters.project>>
+              <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
+              <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
+              <<parameters.additional-arguments>>
