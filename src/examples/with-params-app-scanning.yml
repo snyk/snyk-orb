@@ -15,7 +15,7 @@ usage:
         - run: npm install -q
         - snyk/scan:
             token-variable: SNYK_TOKEN
-            severity: high
-            failOnIssues: false
-            monitorOnBuild: true
+            severity-threshold: high
+            fail-on-issues: false
+            monitor-on-build: true
             project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-app
