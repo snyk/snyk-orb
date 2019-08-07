@@ -51,15 +51,22 @@ parameters:
   os:
     description: The CLI OS version to download
     type: enum
-    enum: ["linux", "macos"]
+    enum: ["linux", "macos", "alpine" ]
     default: "linux"
+  install-alpine-dependencies:
+    description: Install additional dependencies required by the alpine cli
+    type: boolean
+    default: true 
 steps:
   # install snyk
   - run: 
       name: Download Snyk CLI
       command: |
         if [[ ! -x "/usr/local/bin/snyk" ]]; then
-          curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url" | grep <<parameters.os>> | cut -d '"' -f 4 | wget -qi -
+          if [[ "<<parameters.os>>" == "alpine" && "<<parameters.install-alpine-dependencies>>" == "true" ]]; then
+            apk add -q --no-progress --no-cache curl wget libstdc++ sudo
+          fi
+          curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url" | grep <<parameters.os>> | cut -d '"' -f 4 | xargs wget -q
           sha256sum -c snyk-<<parameters.os>>.sha256
           sudo mv snyk-<<parameters.os>> /usr/local/bin/snyk
           sudo chmod +x /usr/local/bin/snyk
