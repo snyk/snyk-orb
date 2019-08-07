@@ -104,7 +104,8 @@ Full reference docs https://circleci.com/orbs/registry/snyk/snyk
 | organization | Name of the Snyk organisation name, under which this project should be tested and monitored | no | - | string |
 | project | A custom name for the Snyk project to be created on snyk.io | no | - | string |
 | additional-arguments | Refer to the Snyk CLI help page for information on additional arguments | no | - | string |
-| os | The CLI OS version to download | no | linux | linux \| macos |
+| os | The CLI OS version to download | no | linux | linux \| macos \| alpine |
+| install-alpine-dependencies | For the alpine CLI, should extenral dependencies be installed | no | true | boolean |
 
 ## Screenshots
 
