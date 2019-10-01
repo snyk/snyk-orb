@@ -90,7 +90,7 @@ build:
 
 ## Orb Parameters
 
-Full reference docs https://circleci.com/orbs/registry/snyk/snyk
+Full reference docs https://circleci.com/orbs/registry/orb/snyk/snyk
 
 | Parameter  | Description | Required | Default | Type |
 | -----------| -------------------------------------------------------------------------------------------------------- | ------------- | ------------- | ------------- |
