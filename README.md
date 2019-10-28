@@ -11,7 +11,7 @@ By utilizing this orb in your projects worklfow, it is possible to use Snyk to t
 In fact, it is very easy to start using the Orb.
 All you need to do is:
 
-1. Follow the instructions at the [Orb Quick Start Guide](https://circleci.com/orbs/registry/orb/snyk/snyk#quick-start) to enable usage of Orbs in your projects worflow.
+1. Follow the instructions at the [Orb Quick Start Guide](https://circleci.com/orbs/registry/orb/snyk/snyk#quick-start) to enable usage of Orbs in your project worflow.
 2. Set up an environment variable (`SNYK_TOKEN`) with your Snyk API token, which you can get from your [account](https://app.snyk.io/account).
 3. In the app build job, call the `snyk/scan`
 4. Optionally, supply parameters to customize orb behaviour
