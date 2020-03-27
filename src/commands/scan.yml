@@ -15,7 +15,7 @@ parameters:
   protect:
     description: Protect the app by applying patches specified in your .snyk file (after running the Snyk wizard)
     type: boolean
-    default: false  
+    default: false
   fail-on-issues:
     description: This specifies if builds should be failed or continued based on issues found by Snyk.
     type: boolean
@@ -32,7 +32,7 @@ parameters:
     description: The image name, if scanning a container image
     type: string
     default: ""
-  organization: 
+  organization:
     description: >
       Name of the Snyk organisation name, under which this project should be tested and monitored
       If omitted the default organization will be used.
@@ -56,17 +56,17 @@ parameters:
   install-alpine-dependencies:
     description: Install additional dependencies required by the alpine cli
     type: boolean
-    default: true 
+    default: true
 steps:
   # install snyk
-  - run: 
+  - run:
       name: Download Snyk CLI
       command: |
         if [[ ! -x "/usr/local/bin/snyk" ]]; then
           if [[ "<<parameters.os>>" == "alpine" && "<<parameters.install-alpine-dependencies>>" == "true" ]]; then
             apk add -q --no-progress --no-cache curl wget libstdc++ sudo
           fi
-          curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url" | grep <<parameters.os>> | cut -d '"' -f 4 | xargs wget -q
+          curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url" | grep <<parameters.os>> | cut -d '"' -f 4 | xargs -n 1 curl -LO
           sha256sum -c snyk-<<parameters.os>>.sha256
           sudo mv snyk-<<parameters.os>> /usr/local/bin/snyk
           sudo chmod +x /usr/local/bin/snyk
@@ -85,7 +85,7 @@ steps:
   - run:
       name: "Run Snyk test to scan app for vulnerabilities"
       command: >
-        snyk test 
+        snyk test
         <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
         <<#parameters.severity-threshold>>--severity-threshold=<<parameters.severity-threshold>><</parameters.severity-threshold>>
         <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
@@ -99,7 +99,7 @@ steps:
         - run:
             name: "Run Snyk monitor for continuous monitoring on snyk.io"
             command: >
-              snyk monitor 
+              snyk monitor
               <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
               <<#parameters.project>>--project-name=<<parameters.project>><</parameters.project>>
               <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
