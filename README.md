@@ -3,7 +3,6 @@
 ## The Snyk Orb
 
 Use the Snyk orb to easily incorporate Snyk into your CircleCI Workflows.
-
 By utilizing this orb in your project workflow, it is possible to use Snyk to test, fix and monitor your project for vulnerabilities in the app dependencies and Docker images, all with a single command. You can set thresholds for vulnerability tolerance in your app or Docker image (and fail the workflows when threshold is exceeded), apply proprietary Snyk patches, and save dependency snapshots on snyk.io for continuous monitoring and alerting.
 
 ## How to use the Snyk Orb
