@@ -63,6 +63,7 @@ steps:
       name: Download Snyk CLI
       environment:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
+        SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: |
         if [[ ! -x "/usr/local/bin/snyk" ]]; then
           if [[ "<<parameters.os>>" == "alpine" && "<<parameters.install-alpine-dependencies>>" == "true" ]]; then
@@ -83,6 +84,7 @@ steps:
             name: "Run Snyk protect to apply patches from .snyk file"
             environment:
               SNYK_INTEGRATION_NAME: CIRCLECI_ORB
+              SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
             command: |
               snyk protect <<parameters.additional-arguments>>
   # snyk test
@@ -90,6 +92,7 @@ steps:
       name: "Run Snyk test to scan app for vulnerabilities"
       environment:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
+        SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: >
         snyk test
         <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
@@ -106,6 +109,7 @@ steps:
             name: "Run Snyk monitor for continuous monitoring on snyk.io"
             environment:
               SNYK_INTEGRATION_NAME: CIRCLECI_ORB
+              SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
             command: >
               snyk monitor
               <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
