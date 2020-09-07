@@ -1,32 +1,141 @@
 version: 2.1
 
 orbs:
-  orb-tools: circleci/orb-tools@2
+  node: circleci/node@4.0.0
+
+defaults: &defaults
+  docker:
+    - image: cimg/base:stable-20.04
+  working_directory: ~/repo
+
+commands:
+  install_cci_cli:
+    description: Install the latest CircleCI CLI
+    steps:
+      - run:
+          name: Install CCI CLI
+          command: |
+            sudo curl -fLSs https://circle.ci/cli | sudo bash
+            # this succesfully installs the new cci CLI to /usr/local/bin/circleci
+            # however, the orig (/usr/bin/circleci) remains in the path
+            # so need to use the full path to circleci
+
+            which /usr/local/bin/circleci
+            /usr/local/bin/circleci version
+            /usr/local/bin/circleci
+
+jobs:
+
+  # This renders all the relavent Orb files into a single file - packed/orb.yml
+  pack-orb:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: See files after checkout
+          command: |
+            ls -la
+      - install_cci_cli
+      - run:
+          name: Pack the Orb
+          command: |
+            mkdir packed
+            /usr/local/bin/circleci orb pack src >> packed/orb.yml
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  # This deploys a dev version
+  dev:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - install_cci_cli
+      - run:
+          name: Deploy dev version of Orb
+          command: |
+            dev_orb_ref="snyk/snyk@dev:${CIRCLE_BRANCH}"
+            echo "dev_orb_ref: ${dev_orb_ref}"
+            /usr/local/bin/circleci orb publish packed/orb.yml $dev_orb_ref --token $CIRCLECI_API_TOKEN
+      - store_artifacts:
+          path: packed/orb.yml
+
+  # This deploys a prod version with the REPLACE_ORB_VERSION rendered in the actualy Orb yaml
+  # and uses semantic-release to handle the versioning.
+  # It bases the new version of the latest git tag and the usual fix/feat/chore commit message prefixes
+  # and will set a new tag in the repo.
+  prod-release:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: See files after attach_workspace
+          command: |
+            ls -la
+      - node/install
+      - run:
+          name: Check Node environment
+          command: |
+            echo node version: $(node --version)
+            echo npx version: $(npx --version)
+      - install_cci_cli
+      - run:
+          name: See the packed Orb # make sure it's here because of the attach_workspace
+          command: |
+            cat packed/orb.yml
+      - run:
+          name: Add github.com to known_hosts # Because without this sometime you get errors connecting to GitHub (for writing the tag)
+          command: |
+            mkdir ~/.ssh
+            ssh-keyscan github.com > ~/.ssh/known_hosts
+      - run:
+          name: Run semantic-release in --dry-run mode to capture info about next release version
+          command: |
+            npx -p @semantic-release/git -p semantic-release semantic-release --branch ${CIRCLE_BRANCH} --dry-run > sem-rel-dry-run.txt
+            cat sem-rel-dry-run.txt
+      - run:
+          name: Update Version and Release
+          command: |
+            if grep "The next release version is" sem-rel-dry-run.txt
+            then
+              echo "Do release"
+              next_version=$(cat sem-rel-dry-run.txt | grep "The next release version is" | sed -n -e 's/^.*is //p')
+              echo "next_version: ${next_version}"              
+
+              sed -i "s|REPLACE_ORB_VERSION|${next_version}|g" packed/orb.yml
+              echo "modified packed yaml file:"
+              cat packed/orb.yml
+
+              prod_orb_ref="snyk/snyk@${next_version}"
+              echo "prod_orb_ref: ${prod_orb_ref}"
+
+              # Set tag in GitHub
+              npx -p @semantic-release/git -p semantic-release semantic-release --branch ${CIRCLE_BRANCH}
+
+              # publish production version
+              /usr/local/bin/circleci orb publish packed/orb.yml $prod_orb_ref --token $CIRCLECI_API_TOKEN
+
+            else
+              echo "Don't do release"
+            fi
+
+      - store_artifacts:
+          path: packed/orb.yml
+
 workflows:
   btd:
     jobs:
-      - orb-tools/pack:
-          source-dir: src/
-          destination-orb-path: packed/orb.yml
-          workspace-path: packed/orb.yml
-          artifact-path: packed/orb.yml
-
-      - orb-tools/publish:
-          orb-path: packed/orb.yml
-          orb-ref: "snyk/snyk@dev:${CIRCLE_BRANCH}"
-          publish-token-variable: "$CIRCLECI_API_TOKEN"
-          attach-workspace: true
-          checkout: false
-          requires: [orb-tools/pack]
-
-      - orb-tools/increment:
-          orb-path: packed/orb.yml
-          orb-ref: "snyk/snyk"
-          segment: "patch"
-          publish-token-variable: "$CIRCLECI_API_TOKEN"
-          attach-workspace: true
-          checkout: false
-          requires: [orb-tools/pack]
+      - pack-orb
+      - dev:
+          requires:
+            - pack-orb
+      - prod-release:
+          context: nodejs-lib-release
+          requires:
+            - pack-orb
           filters:
             branches:
               only: master
