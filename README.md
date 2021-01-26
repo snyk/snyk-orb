@@ -100,7 +100,7 @@ Full reference docs https://circleci.com/orbs/registry/orb/snyk/snyk
 | monitor-on-build | Take a current application dependencies snapshot for continuous monitoring by Snyk, if test was succesful | no | true | boolean |
 | target-file | The path to the manifest file to be used by Snyk. Should be provided if non-standard | no | - | string |
 | docker-image-name | The image name, if scanning a container image | no | - | string |
-| organization | Name of the Snyk organisation name, under which this project should be tested and monitored | no | - | string |
+| organization | The Snyk Organization ID (see Organization-level Settings tab in the Snyk UI) under which this project should be tested and monitored. | no | - | string |
 | project | A custom name for the Snyk project to be created on snyk.io | no | - | string |
 | additional-arguments | Refer to the Snyk CLI help page for information on additional arguments | no | - | string |
 | os | The CLI OS version to download | no | linux | linux \| macos \| alpine |
