@@ -8,9 +8,9 @@ parameters:
     type: env_var_name
     default: SNYK_TOKEN
   severity-threshold:
-    description: Only report vulnerabilities of provided level or higher (low/medium/high). Default is low.
+    description: Only report vulnerabilities of provided level or higher (low/medium/high/critical). Default is low.
     type: enum
-    enum: ["low", "medium", "high"]
+    enum: ["low", "medium", "high", "critical"]
     default: "low"
   protect:
     description: Protect the app by applying patches specified in your .snyk file (after running the Snyk wizard)
