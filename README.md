@@ -94,7 +94,7 @@ Full reference docs https://circleci.com/orbs/registry/orb/snyk/snyk
 | Parameter  | Description | Required | Default | Type |
 | -----------| -------------------------------------------------------------------------------------------------------- | ------------- | ------------- | ------------- |
 | token-variable | Name of env var containing your Snyk API token | no | SNYK_TOKEN | env_var_name |
-| severity-threshold | Only report vulnerabilities of provided level or higher (low/medium/high) | no | low | low \| med \| high |
+| severity-threshold | Only report vulnerabilities of provided level or higher (low/medium/high/critical) | no | low | low \| med \| high \| critical |
 | protect | Protect the app by applying patches specified in your .snyk file (after running the Snyk wizard) | no | false | boolean |
 | fail-on-issues | This specifies if builds should be failed or continued based on issues found by Snyk | no | true | boolean |
 | monitor-on-build | Take a current application dependencies snapshot for continuous monitoring by Snyk, if test was succesful | no | true | boolean |
