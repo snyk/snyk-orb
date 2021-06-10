@@ -1,4 +1,4 @@
-description: |
+description: >
   Advanced example of scanning a container image, with customized behaviour
 usage:
   version: 2.1
@@ -11,7 +11,7 @@ usage:
       environment:
         IMAGE_NAME: myrepo/myapp
       docker:
-          - image: circleci/buildpack-deps:stretch
+        - image: circleci/buildpack-deps:stretch
       steps:
         - checkout
         - setup_remote_docker
