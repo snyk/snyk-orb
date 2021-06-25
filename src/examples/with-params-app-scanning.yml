@@ -1,5 +1,6 @@
-description: |
-  Advanced example of scanning the application dependencies, with customized behaviour
+description: >
+  Advanced example of scanning the application dependencies, with customized
+  behaviour
 usage:
   version: 2.1
 
@@ -9,10 +10,10 @@ usage:
   jobs:
     build:
       docker:
-        - image: circleci/node:4.8.2
+        - image: cimg/node:lts
       steps:
         - checkout
-        - run: npm install -q
+        - run: npm ci
         - snyk/scan:
             token-variable: SNYK_TOKEN
             severity-threshold: high
