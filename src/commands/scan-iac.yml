@@ -1,0 +1,14 @@
+description: Scan your applications IaC files for issues
+parameters:
+  path:
+    description: Path to a specific file or directory to test
+    type: string
+    default: ""
+steps:
+  - run:
+      name: Scan for IaC issues
+      environment:
+        SNYK_INTEGRATION_NAME: CIRCLECI_ORB
+        SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
+      command: >
+        snyk iac test <<#parameters.path>> <<parameters.path>><</parameters.path>>
