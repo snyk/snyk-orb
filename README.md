@@ -2,8 +2,8 @@
 
 ## The Snyk Orb
 
-Use the Snyk orb to easily incorporate Snyk into your CircleCI Workflows.
-By utilizing this orb in your project workflow, it is possible to use Snyk to test, fix and monitor your project for vulnerabilities in the app dependencies and Docker images, all with a single command. You can set thresholds for vulnerability tolerance in your app or Docker image (and fail the workflows when threshold is exceeded), apply proprietary Snyk patches, and save dependency snapshots on snyk.io for continuous monitoring and alerting.
+Use the Snyk orb to easily integrate Snyk into your CircleCI Workflows.
+This orb allows you to use Snyk to find, fix and monitor for vulnerabilities in application dependencies and Docker images. You can also scan Terraform, Kubernetes, and CloudFormation manifests for misconfigurations. Advanced functionality such as setting thresholds for vulnerability tolerance to fail workflows, applying proprietary Snyk patches, and saving dependency snapshots on snyk.io for continuous monitoring is also available.
 
 ## How to use the Snyk Orb
 
@@ -11,9 +11,9 @@ In fact, it is very easy to start using the Orb.
 All you need to do is:
 
 1. Follow the instructions at the [Orb Quick Start Guide](https://circleci.com/orbs/registry/orb/snyk/snyk#quick-start) to enable usage of Orbs in your project workflow.
-2. Set up an environment variable (`SNYK_TOKEN`) with your Snyk API token, which you can get from your [account](https://app.snyk.io/account).
-3. In the app build job, call the `snyk/scan`
-4. Optionally, supply parameters to customize orb behaviour
+2. [Register for a Snyk Account](https://snyk.co/udtEr), then set up an environment variable (`SNYK_TOKEN`) with your Snyk API token, which you can get from your [account](https://app.snyk.io/account).
+3. In the config.yml file, invoke the Snyk scan you'd like to run. Three jobs are available: `snyk/opensource`, `snyk/container`, and `snyk/iac`.
+4. Provide additional parameters to customize orb behaviour.
 
 ## Usage Examples
 
@@ -32,10 +32,10 @@ version: 2.1
       steps:
         - checkout
         - run: npm install -q
-        - snyk/scan
+        - snyk/opensource
 ```
 
-### Scan Docker Image
+### Scan Docker Images or OCI archives
 
 ```yaml
 version: 2.1
@@ -55,7 +55,7 @@ jobs:
       - run:
           name: Build Docker image
           command: docker build -t $IMAGE_NAME:latest .
-      - snyk/scan:
+      - snyk/container:
           token-variable: SNYK_TOKEN
           docker-image-name: $IMAGE_NAME:latest
           target-file: "Dockerfile"
