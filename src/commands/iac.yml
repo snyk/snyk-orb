@@ -41,6 +41,23 @@ parameters:
     default: true
 steps:
   - run:
+      name: Download Snyk CLI if not already present
+      environment:
+        SNYK_INTEGRATION_NAME: CIRCLECI_ORB
+        SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
+      command: |
+        if [[ ! -x "/usr/local/bin/snyk" ]]; then
+          if [[ "<<parameters.os>>" == "alpine" && "<<parameters.install-alpine-dependencies>>" == "true" ]]; then
+            apk add -q --no-progress --no-cache curl wget libstdc++ sudo
+          fi
+          curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url" | grep <<parameters.os>> | cut -d '"' -f 4 | xargs -n 1 curl -LO
+          sha256sum -c snyk-<<parameters.os>>.sha256
+          sudo mv snyk-<<parameters.os>> /usr/local/bin/snyk
+          sudo chmod +x /usr/local/bin/snyk
+        fi
+        snyk config set disableSuggestions=true
+        <<#parameters.token-variable>>snyk auth $<<parameters.token-variable>><</parameters.token-variable>>
+  - run:
       name: Scan for IaC issues
       environment:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
