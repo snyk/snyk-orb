@@ -20,7 +20,7 @@ parameters:
     description: The path to a file or directory to test for IAC misconfigurations.
     type: string
     default: ""
-    additional-arguments:
+  additional-arguments:
     description: Refer to the Snyk CLI help page for information on additional arguments.
     type: string
     default: ""
