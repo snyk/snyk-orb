@@ -1,0 +1,10 @@
+  
+description: Scan Open Source dependencies in your application for known vulnerabilities and license issues.
+
+docker:
+  - image: snyk/snyk-cli
+resource_class: medium
+
+steps:
+  - checkout
+  - snyk/opensource
