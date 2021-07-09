@@ -85,7 +85,7 @@ steps:
               snyk protect <<parameters.additional-arguments>>
   # snyk test
   - run:
-      name: "Run a point-in-time scan for vulnerable dependencies."
+      name: "Run Snyk test to scan for vulnerable dependencies and license issues without persisting a snapshot."
       environment:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
