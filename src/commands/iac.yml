@@ -1,4 +1,4 @@
-description: Scan Terraform, Kubernetes, CloudFormation, and Helm files for configuration issues
+description: Scan Terraform, Kubernetes, and CloudFormation files for configuration issues
 parameters:
   token-variable:
     description: >
@@ -37,7 +37,7 @@ parameters:
     default: true
 steps:
   - run:
-      name: Download Snyk CLI if not already present
+      name: Install Snyk CLI if necessary
       environment:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
@@ -54,7 +54,7 @@ steps:
         snyk config set disableSuggestions=true
         <<#parameters.token-variable>>snyk auth $<<parameters.token-variable>><</parameters.token-variable>>
   - run:
-      name: Scan for IaC issues
+      name: Scan for IAC misconfigurations
       environment:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
