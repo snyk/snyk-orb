@@ -1,8 +1,9 @@
 version: 2.1
 
 description: >
-  Use Snyk to find, fix and monitor known vulnerabilities in your app dependencies and docker image.
-  To use this orb you need to have a registered account with snyk.io and and API token.
+  Snyk enables modern applications to be built securely. 
+  Use Snyk to find, fix, and monitor known vulnerabilities in your app dependencies, container images, and infrastructure and code. 
+  To use this orb, you need to have a Snyk account and an API token.
 display:
   source_url: https://github.com/snyk/snyk-orb/
   home_url: https://snyk.io/
