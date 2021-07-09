@@ -1,4 +1,4 @@
-description: Scan the application dependencies for known vulnerabilities with Snyk. This command calls the others, and should be used as the command for scanning.
+description: Use Snyk to scan application package manager manifests for vulnerable dependencies.
 parameters:
   token-variable:
     description: >
@@ -26,10 +26,6 @@ parameters:
     default: true
   target-file:
     description: The path to the manifest file to be used by Snyk. Should be provided if non-standard.
-    type: string
-    default: ""
-  docker-image-name:
-    description: The image name, if scanning a container image
     type: string
     default: ""
   organization:
@@ -89,13 +85,12 @@ steps:
               snyk protect <<parameters.additional-arguments>>
   # snyk test
   - run:
-      name: "Run Snyk test to scan app for vulnerabilities"
+      name: "Run a point-in-time scan for vulnerable dependencies."
       environment:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: >
         snyk test
-        <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
         <<#parameters.severity-threshold>>--severity-threshold=<<parameters.severity-threshold>><</parameters.severity-threshold>>
         <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
         <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
@@ -106,13 +101,12 @@ steps:
       condition: <<parameters.monitor-on-build>>
       steps:
         - run:
-            name: "Run Snyk monitor for continuous monitoring on snyk.io"
+            name: "Monitor your dependencies for new vulnerabilities in Snyk.io"
             environment:
               SNYK_INTEGRATION_NAME: CIRCLECI_ORB
               SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
             command: >
               snyk monitor
-              <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
               <<#parameters.project>>--project-name=<<parameters.project>><</parameters.project>>
               <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
               <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
