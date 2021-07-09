@@ -1,6 +1,5 @@
 description: >
-  Use the Snyk orb inside a build job to scan a container image for known
-  vulnerabilities
+  Use the Snyk orb inside a build job to scan Terraform and Kubernetes manifests for misconfigurations.
 usage:
   version: 2.1
 
