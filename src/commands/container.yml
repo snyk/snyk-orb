@@ -25,9 +25,14 @@ parameters:
     type: string
     default: ""
   docker-image-name:
-    description: The container image to scan, in the format <repo>/<image>:<tag>
+    description: The container image to scan. Provide an image and tag or path to an OCI archive.
     type: string
     default: ""
+  docker-image-platform:
+    description: Explicitly test an image for a specific platform if your repo represents multiple manifests.
+    type: enum
+    enum: ["linux/amd64", "linux/arm64", "linux/riscv64", "linux/ppc64le", "linux/s390x", "linux/386", "linux/arm/v7", "linux/arm/v"]
+    default: "linux/amd64"
   organization:
     description: >
       Name of the Snyk organisation name, under which this project should be tested and monitored
