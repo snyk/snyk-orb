@@ -1,0 +1,9 @@
+description: Scan container images for known vulnerabilities in dependencies.
+
+docker:
+  - image: snyk/snyk-cli
+resource_class: medium
+
+steps:
+  - checkout
+  - snyk/iac
