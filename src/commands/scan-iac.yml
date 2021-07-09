@@ -1,9 +1,44 @@
-description: Scan your applications IaC files for issues
+description: Scan Terraform, Kubernetes, CloudFormation, and Helm files for configuration issues
 parameters:
-  path:
-    description: Path to a specific file or directory to test
+  token-variable:
+    description: >
+      Name of env var containing your Snyk API token. Pass this as a raw string such as CICD_SNYK_TOKEN.
+      Do not paste the actual token into your configuration.
+      If omitted it's assumed the CLI has already been setup with a valid token beforehand.
+    type: env_var_name
+    default: SNYK_TOKEN
+  severity-threshold:
+    description: Only report vulnerabilities of provided level or higher (low/medium/high/critical). Default is low.
+    type: enum
+    enum: ["low", "medium", "high", "critical"]
+    default: "low"
+  fail-on-issues:
+    description: This specifies if builds should be failed or continued based on issues found by Snyk.
+    type: boolean
+    default: true
+  target-file:
+    description: The path to a file or directory to test for IAC misconfigurations.
     type: string
     default: ""
+    additional-arguments:
+    description: Refer to the Snyk CLI help page for information on additional arguments.
+    type: string
+    default: ""
+  organization:
+    description: >
+      Name of the Snyk organisation name, under which this project should be tested.
+      If omitted the default organization will be used.
+    type: string
+    default: ""
+  os:
+    description: The CLI OS version to download
+    type: enum
+    enum: ["linux", "macos", "alpine" ]
+    default: "linux"
+  install-alpine-dependencies:
+    description: Install additional dependencies required by the alpine cli
+    type: boolean
+    default: true
 steps:
   - run:
       name: Scan for IaC issues
@@ -11,4 +46,11 @@ steps:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: >
-        snyk iac test <<#parameters.path>> <<parameters.path>><</parameters.path>>
+        snyk iac test 
+        <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
+        <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
+        <<#parameters.severity-threshold>>--severity-threshold=<<parameters.severity-threshold>><</parameters.severity-threshold>>
+        <<parameters.additional-arguments>>
+        <<^parameters.fail-on-issues>> || true<</parameters.fail-on-issues>>
+
+
