@@ -4,6 +4,13 @@ docker:
   - image: snyk/snyk-cli:npm
 resource_class: medium
 
+parameters:
+  path:
+    description: Path to a specific file or directory to test
+    type: string
+    default: ""
+
 steps:
   - checkout
-  - scan-iac
+  - scan-iac:
+      path: <<parameters.path>>
