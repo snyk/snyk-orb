@@ -9,6 +9,21 @@ parameters:
     description: Path to a specific file or directory to test
     type: string
     default: ""
+  severity-threshold:
+    description: Only report vulnerabilities of provided level or higher (low/medium/high/critical). Default is low.
+    type: enum
+    enum: ["low", "medium", "high", "critical"]
+    default: "low"
+  organization:
+    description: >
+      Name of the Snyk organisation name, under which this project should be tested and monitored
+      If omitted the default organization will be used.
+    type: string
+    default: ""
+  fail-on-issues:
+    description: This specifies if builds should be failed or continued based on issues found by Snyk.
+    type: boolean
+    default: true
 
 steps:
   - checkout
