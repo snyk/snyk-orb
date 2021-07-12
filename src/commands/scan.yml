@@ -1,5 +1,10 @@
 description: Scan the application dependencies for known vulnerabilities with Snyk. This command calls the others, and should be used as the command for scanning.
 parameters:
+  command:
+    description: >
+      The Snyk command to call, i.e. "test" or "iac test"
+    type: string
+    default: "test"
   token-variable:
     description: >
       Name of env var containing your Snyk API token. Pass this as a raw string such as CICD_SNYK_TOKEN.
@@ -51,7 +56,7 @@ parameters:
   os:
     description: The CLI OS version to download
     type: enum
-    enum: ["linux", "macos", "alpine" ]
+    enum: ["linux", "macos", "alpine"]
     default: "linux"
   install-alpine-dependencies:
     description: Install additional dependencies required by the alpine cli
@@ -89,12 +94,12 @@ steps:
               snyk protect <<parameters.additional-arguments>>
   # snyk test
   - run:
-      name: "Run Snyk test to scan app for vulnerabilities"
+      name: "Run Snyk"
       environment:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: >
-        snyk test
+        snyk <<parameters.command>>
         <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
         <<#parameters.severity-threshold>>--severity-threshold=<<parameters.severity-threshold>><</parameters.severity-threshold>>
         <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
