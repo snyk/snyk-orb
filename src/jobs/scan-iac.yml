@@ -1,0 +1,9 @@
+description: Scan your applications IaC files for issues
+
+docker:
+  - image: snyk/snyk-cli:npm
+resource_class: medium
+
+steps:
+  - checkout
+  - scan-iac

@@ -1,5 +1,6 @@
-description: |
-  Use the Snyk orb inside a build job to scan a container image for known vulnerabilities
+description: >
+  Use the Snyk orb inside a build job to scan a container image for known
+  vulnerabilities
 usage:
   version: 2.1
 
@@ -11,7 +12,7 @@ usage:
       environment:
         IMAGE_NAME: myrepo/myapp
       docker:
-          - image: circleci/buildpack-deps:stretch
+        - image: cimg/buildpack-deps:stretch
       steps:
         - checkout
         - setup_remote_docker

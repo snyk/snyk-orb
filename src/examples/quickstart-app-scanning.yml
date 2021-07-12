@@ -1,5 +1,6 @@
-description: |
-  Use the Snyk orb inside a build job to scan the application dependencies for known vulnerabilities
+description: >
+  Use the Snyk orb inside a build job to scan the application dependencies for
+  known vulnerabilities
 usage:
   version: 2.1
 
@@ -9,8 +10,8 @@ usage:
   jobs:
     build:
       docker:
-        - image: circleci/node:4.8.2
+        - image: cimg/node:lts
       steps:
         - checkout
-        - run: npm install -q
+        - run: npm ci
         - snyk/scan
