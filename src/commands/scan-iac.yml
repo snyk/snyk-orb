@@ -51,7 +51,7 @@ steps:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: >
-        snyk iac test <<#parameters.path>> <<parameters.path>><</parameters.path>>
+        snyk iac test <<#parameters.path>><<parameters.path>><</parameters.path>>
         <<#parameters.severity-threshold>>--severity-threshold=<<parameters.severity-threshold>><</parameters.severity-threshold>>
         <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
         <<^parameters.fail-on-issues>> || true<</parameters.fail-on-issues>>
