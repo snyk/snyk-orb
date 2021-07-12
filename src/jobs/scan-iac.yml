@@ -17,3 +17,4 @@ steps:
   - scan:
       command: "iac test"
       additional-arguments: <<parameters.args>>
+      monitor-on-build: false
