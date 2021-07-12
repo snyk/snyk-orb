@@ -14,3 +14,7 @@ steps:
   - checkout
   - scan-iac:
       path: <<parameters.path>>
+      severity-threshold: <<parameters.severity-threshold>>
+      organization: <<parameters.organization>>
+      fail-on-issues: <<parameters.fail-on-issues>>
+      
