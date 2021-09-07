@@ -45,6 +45,8 @@ jobs:
           root: .
           paths:
             - .
+      - store_artifacts:
+          path: packed/orb.yml
 
   # This deploys a dev version
   dev:
@@ -59,8 +61,7 @@ jobs:
             dev_orb_ref="snyk/snyk@dev:${CIRCLE_BRANCH}"
             echo "dev_orb_ref: ${dev_orb_ref}"
             /usr/local/bin/circleci orb publish packed/orb.yml $dev_orb_ref --token $CIRCLECI_API_TOKEN
-      - store_artifacts:
-          path: packed/orb.yml
+
 
   # This deploys a prod version with the REPLACE_ORB_VERSION rendered in the actualy Orb yaml
   # and uses semantic-release to handle the versioning.
@@ -121,9 +122,6 @@ jobs:
             else
               echo "Don't do release"
             fi
-
-      - store_artifacts:
-          path: packed/orb.yml
 
 workflows:
   btd:
