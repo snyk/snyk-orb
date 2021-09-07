@@ -74,7 +74,7 @@ steps:
           if [[ "<<parameters.os>>" == "alpine" && "<<parameters.install-alpine-dependencies>>" == "true" ]]; then
             apk add -q --no-progress --no-cache curl wget libstdc++ sudo
           fi
-          curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url" | grep <<parameters.os>> | cut -d '"' -f 4 | xargs -n 1 curl -LO
+          curl -s https://static.snyk.io/cli/latest/snyk-<<parameters.os>> -o snyk-<<parameters.os>>
           sha256sum -c snyk-<<parameters.os>>.sha256
           sudo mv snyk-<<parameters.os>> /usr/local/bin/snyk
           sudo chmod +x /usr/local/bin/snyk
