@@ -17,10 +17,6 @@ parameters:
     type: enum
     enum: ["low", "medium", "high", "critical"]
     default: "low"
-  protect:
-    description: Protect the app by applying patches specified in your .snyk file (after running the Snyk wizard)
-    type: boolean
-    default: false
   fail-on-issues:
     description: This specifies if builds should be failed or continued based on issues found by Snyk.
     type: boolean
@@ -84,17 +80,6 @@ steps:
         fi
         snyk config set disableSuggestions=true
         <<#parameters.token-variable>>snyk auth $<<parameters.token-variable>><</parameters.token-variable>>
-  # snyk protect
-  - when:
-      condition: <<parameters.protect>>
-      steps:
-        - run:
-            name: "Run Snyk protect to apply patches from .snyk file"
-            environment:
-              SNYK_INTEGRATION_NAME: CIRCLECI_ORB
-              SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
-            command: |
-              snyk protect <<parameters.additional-arguments>>
   # snyk test
   - run:
       name: "Run Snyk"
