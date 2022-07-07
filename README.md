@@ -87,6 +87,7 @@ build:
         monitor-on-build: true                                    # create a snapshot of apps dependencies on snyk.io, for continoues monitoring (recommended!)
         project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-app  # use this to save the snapshot under specific names.
         organization: ${SNYK_CICD_ORGANIZATION}                   # save reports under a specific Snyk organization
+        no-output-timeout: 20m                                    # set timeout without output to 20 mins
 ```
 
 ## Orb Parameters
@@ -107,6 +108,7 @@ Full reference docs https://circleci.com/orbs/registry/orb/snyk/snyk
 | additional-arguments | Refer to the Snyk CLI help page for information on additional arguments | no | - | string |
 | os | The CLI OS version to download | no | linux | linux \| macos \| alpine |
 | install-alpine-dependencies | For the alpine CLI, should extenral dependencies be installed | no | true | boolean |
+| no-output-timeout | Elapsed time the command can run without output. The default is 10 minutes | no | 10m | string |
 
 ## Screenshots
 
