@@ -98,8 +98,7 @@ steps:
         <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
         <<parameters.additional-arguments>>
         <<^parameters.fail-on-issues>> || true<</parameters.fail-on-issues>>
-      no_output_timeout: >
-              <<parameters.no-output-timeout>>
+      no_output_timeout: "<<parameters.no-output-timeout>>"
   # snyk monitor
   - when:
       condition: <<parameters.monitor-on-build>>
@@ -116,5 +115,4 @@ steps:
               <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
               <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
               <<parameters.additional-arguments>>
-            no_output_timeout: >
-              <<parameters.no-output-timeout>>
+            no_output_timeout: "<<parameters.no-output-timeout>>"
