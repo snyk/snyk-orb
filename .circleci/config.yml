@@ -116,7 +116,7 @@ jobs:
               # Set tag in GitHub
               npx -p @semantic-release/git -p semantic-release semantic-release --branch ${CIRCLE_BRANCH}
 
-              # publish production version
+              # publish production version (needs different token)
               /usr/local/bin/circleci orb publish packed/orb.yml $prod_orb_ref --token ${CIRCLE_TOKEN}
 
             else
