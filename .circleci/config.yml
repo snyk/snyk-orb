@@ -60,7 +60,7 @@ jobs:
           command: |
             dev_orb_ref="snyk/snyk@dev:${CIRCLE_BRANCH}"
             echo "dev_orb_ref: ${dev_orb_ref}"
-            /usr/local/bin/circleci orb publish packed/orb.yml $dev_orb_ref --token $CIRCLECI_API_TOKEN
+            /usr/local/bin/circleci orb publish packed/orb.yml $dev_orb_ref --token ${CIRCLE_TOKEN}
 
 
   # This deploys a prod version with the REPLACE_ORB_VERSION rendered in the actualy Orb yaml
@@ -117,7 +117,7 @@ jobs:
               npx -p @semantic-release/git -p semantic-release semantic-release --branch ${CIRCLE_BRANCH}
 
               # publish production version
-              /usr/local/bin/circleci orb publish packed/orb.yml $prod_orb_ref --token $CIRCLECI_API_TOKEN
+              /usr/local/bin/circleci orb publish packed/orb.yml $prod_orb_ref --token ${CIRCLE_TOKEN}
 
             else
               echo "Don't do release"
@@ -128,10 +128,14 @@ workflows:
     jobs:
       - pack-orb
       - dev:
+          context:
+            - orb-publishing
           requires:
             - pack-orb
       - prod-release:
-          context: nodejs-lib-release
+          context:
+            - nodejs-lib-release
+            - orb-publishing
           requires:
             - pack-orb
           filters:
