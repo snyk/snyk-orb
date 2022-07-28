@@ -14,7 +14,8 @@ All you need to do is:
    [Orb Quick Start Guide](https://circleci.com/orbs/registry/orb/snyk/snyk#quick-start)
    to enable usage of Orbs in your project workflow
 2. Set up an environment variable (`SNYK_TOKEN`) with your Snyk API token, which
-   you can get from your [account](https://snyk.co/udBRK)
+   you can get from your account in your Snyk instance
+   - Optionally, you can set your API endpoint with `SNYK_API` if it differs from the default (https://snyk.io/)
 3. In the app build job, call the `snyk/scan`
 4. Optionally, supply parameters to customize orb behaviour
 
