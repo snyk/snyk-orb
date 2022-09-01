@@ -45,6 +45,11 @@ parameters:
       If omitted a default-generated project name will be used.
     type: string
     default: ""
+  cli-version:
+    description: >
+      The version of the Snyk CLI you are using.
+    type: string
+    default: ""
   additional-arguments:
     description: Refer to the Snyk CLI help page for information on additional arguments.
     type: string
@@ -63,6 +68,19 @@ parameters:
     type: string
     default: "10m"
 steps:
+  - run:
+      name: Store Snyk CLI version as a temporary checksum file
+      environment:
+        SNYK_VERSION: <<parameters.cli-version>>
+      command: |
+        if [[ -z "${SNYK_VERSION}" ]]
+          curl https://static.snyk.io/cli/latest/version > /tmp/.snyk-version
+        else
+          echo ${SNYK_VERSION} >> /tmp/.snyk-version
+        fi
+  - restore_cache:
+      keys:
+        - v0-snyk-install-{{ arch }}-<<parameters.os>>-{{ checksum "/tmp/.snyk-version" }}
   # install snyk
   - run:
       name: Download Snyk CLI
@@ -116,3 +134,11 @@ steps:
               <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
               <<parameters.additional-arguments>>
             no_output_timeout: "<<parameters.no-output-timeout>>"
+  - run:
+      when: always
+      name: Save Snyk CLI cache
+      steps:
+        - save-cache:
+            key: v0-snyk-install-{{ arch }}-<<parameters.os>>-{{ checksum "/tmp/.snyk-version" }}
+            paths:
+              - /usr/local/bin/snyk
