@@ -71,12 +71,12 @@ steps:
   - run:
       name: Store Snyk CLI version as a temporary checksum file
       environment:
-        SNYK_VERSION: <<parameters.cli-version>>
+        SNYK_CLI_VERSION: <<parameters.cli-version>>
       command: |
-        if [[ -z "${SNYK_VERSION}" ]]; then
+        if [[ -z "${SNYK_CLI_VERSION}" ]]; then
           curl https://static.snyk.io/cli/latest/version > /tmp/.snyk-version
         else
-          echo "${SNYK_VERSION}" >> /tmp/.snyk-version
+          echo "${SNYK_CLI_VERSION}" >> /tmp/.snyk-version
         fi
   - restore_cache:
       keys:
@@ -88,14 +88,14 @@ steps:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: |
-        if [[ ! -x "/usr/local/bin/snyk" ]]; then
+        if [[ ! -x "/tmp/snyk" ]]; then
           if [[ "<<parameters.os>>" == "alpine" && "<<parameters.install-alpine-dependencies>>" == "true" ]]; then
             apk add -q --no-progress --no-cache curl wget libstdc++ sudo
           fi
-          LATEST_SNYK_CLI_VERSION=$(curl https://static.snyk.io/cli/latest/version)
-          echo "Downloading Snyk CLI version ${LATEST_SNYK_CLI_VERSION}"
-          curl -sO --retry 6 https://static.snyk.io/cli/v${LATEST_SNYK_CLI_VERSION}/snyk-<<parameters.os>>
-          curl -sO --retry 6 https://static.snyk.io/cli/v${LATEST_SNYK_CLI_VERSION}/snyk-<<parameters.os>>.sha256
+          SNYK_CLI_VERSION=$(cat "/tmp/.snyk-version")
+          echo "Downloading Snyk CLI version ${SNYK_CLI_VERSION}"
+          curl -sO --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>
+          curl -sO --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>.sha256
           sha256sum -c snyk-<<parameters.os>>.sha256
           sudo mv snyk-<<parameters.os>> /tmp/snyk
           sudo chmod +x /tmp/snyk
