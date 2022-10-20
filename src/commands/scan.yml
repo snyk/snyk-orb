@@ -73,14 +73,14 @@ steps:
       environment:
         SNYK_VERSION: <<parameters.cli-version>>
       command: |
-        if [[ -z "${SNYK_VERSION}" ]]
+        if [[ -z "${SNYK_VERSION}" ]]; then
           curl https://static.snyk.io/cli/latest/version > /tmp/.snyk-version
         else
-          echo ${SNYK_VERSION} >> /tmp/.snyk-version
+          echo "${SNYK_VERSION}" >> /tmp/.snyk-version
         fi
   - restore_cache:
       keys:
-        - v0-snyk-install-{{ arch }}-<<parameters.os>>-{{ checksum "/tmp/.snyk-version" }}
+        - v0-snyk-cli-install-{{ arch }}-<<parameters.os>>-{{ checksum "/tmp/.snyk-version" }}
   # install snyk
   - run:
       name: Download Snyk CLI
@@ -97,9 +97,10 @@ steps:
           curl -sO --retry 6 https://static.snyk.io/cli/v${LATEST_SNYK_CLI_VERSION}/snyk-<<parameters.os>>
           curl -sO --retry 6 https://static.snyk.io/cli/v${LATEST_SNYK_CLI_VERSION}/snyk-<<parameters.os>>.sha256
           sha256sum -c snyk-<<parameters.os>>.sha256
-          sudo mv snyk-<<parameters.os>> /usr/local/bin/snyk
-          sudo chmod +x /usr/local/bin/snyk
+          sudo mv snyk-<<parameters.os>> /tmp/snyk
+          sudo chmod +x /tmp/snyk
         fi
+        sudo ln -sf /tmp/snyk /usr/local/bin/snyk
         snyk config set disableSuggestions=true
         <<#parameters.token-variable>>snyk auth $<<parameters.token-variable>><</parameters.token-variable>>
   # snyk test
@@ -134,11 +135,7 @@ steps:
               <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
               <<parameters.additional-arguments>>
             no_output_timeout: "<<parameters.no-output-timeout>>"
-  - run:
-      when: always
-      name: Save Snyk CLI cache
-      steps:
-        - save-cache:
-            key: v0-snyk-install-{{ arch }}-<<parameters.os>>-{{ checksum "/tmp/.snyk-version" }}
-            paths:
-              - /usr/local/bin/snyk
+  - save_cache:
+      key: v0-snyk-cli-install-{{ arch }}-<<parameters.os>>-{{ checksum "/tmp/.snyk-version" }}
+      paths:
+        - /tmp/snyk
