@@ -135,6 +135,7 @@ steps:
               <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
               <<parameters.additional-arguments>>
             no_output_timeout: "<<parameters.no-output-timeout>>"
+
   - save_cache:
       key: v0-snyk-cli-install-{{ arch }}-<<parameters.os>>-{{ checksum "/tmp/.snyk-version" }}
       paths:
