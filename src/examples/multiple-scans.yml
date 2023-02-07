@@ -1,0 +1,21 @@
+description: Run multiple scans in a single CI job
+usage:
+  version: "2.1"
+
+  orbs:
+    snyk: snyk/snyk@x.y.z
+
+  jobs:
+    scan:
+      docker:
+        - image: cimg/node:lts
+      steps:
+        - checkout
+        - snyk/install
+        - snyk/configure
+        - run:
+            name: Run SCA scan
+            command: snyk test
+        - run:
+            name: Run code scan
+            command snyk code test

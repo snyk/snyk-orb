@@ -68,41 +68,12 @@ parameters:
     type: string
     default: "10m"
 steps:
-  - run:
-      name: Store Snyk CLI version as a temporary checksum file
-      environment:
-        SNYK_CLI_VERSION: <<parameters.cli-version>>
-      command: |
-        if [[ -z "${SNYK_CLI_VERSION}" ]]; then
-          curl https://static.snyk.io/cli/latest/version > /tmp/.snyk-version
-        else
-          echo "${SNYK_CLI_VERSION}" >> /tmp/.snyk-version
-        fi
-  - restore_cache:
-      keys:
-        - v0-snyk-cli-install-{{ arch }}-<<parameters.os>>-{{ checksum "/tmp/.snyk-version" }}
-  # install snyk
-  - run:
-      name: Download Snyk CLI
-      environment:
-        SNYK_INTEGRATION_NAME: CIRCLECI_ORB
-        SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
-      command: |
-        if [[ ! -x "/tmp/snyk" ]]; then
-          if [[ "<<parameters.os>>" == "alpine" && "<<parameters.install-alpine-dependencies>>" == "true" ]]; then
-            apk add -q --no-progress --no-cache curl wget libstdc++ sudo
-          fi
-          SNYK_CLI_VERSION=$(cat "/tmp/.snyk-version")
-          echo "Downloading Snyk CLI version ${SNYK_CLI_VERSION}"
-          curl -sO --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>
-          curl -sO --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>.sha256
-          sha256sum -c snyk-<<parameters.os>>.sha256
-          sudo mv snyk-<<parameters.os>> /tmp/snyk
-          sudo chmod +x /tmp/snyk
-        fi
-        sudo ln -sf /tmp/snyk /usr/local/bin/snyk
-        snyk config set disableSuggestions=true
-        <<#parameters.token-variable>>snyk auth $<<parameters.token-variable>><</parameters.token-variable>>
+  - install:
+      cli-version: <<parameters.cli-version>>
+      os: <<parameters.os>>
+      install-alpine-dependencies: <<parameters.install-alpine-dependencies>>
+  - configure:
+      token-variable: <<parameters.token-variable>>
   # snyk test
   - run:
       name: "Run Snyk"
@@ -135,8 +106,3 @@ steps:
               <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
               <<parameters.additional-arguments>>
             no_output_timeout: "<<parameters.no-output-timeout>>"
-
-  - save_cache:
-      key: v0-snyk-cli-install-{{ arch }}-<<parameters.os>>-{{ checksum "/tmp/.snyk-version" }}
-      paths:
-        - /tmp/snyk

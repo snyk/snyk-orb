@@ -1,0 +1,18 @@
+description: Configure snyk CLI
+parameters:
+  token-variable:
+    description: >
+      Name of env var containing your Snyk API token. Pass this as a raw string such as CICD_SNYK_TOKEN.
+      Do not paste the actual token into your configuration.
+      If omitted it's assumed the CLI has already been setup with a valid token beforehand.
+    type: env_var_name
+    default: SNYK_TOKEN
+steps:
+  - run:
+      name: Configure Snyk CLI
+      environment:
+        SNYK_INTEGRATION_NAME: CIRCLECI_ORB
+        SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
+      command: |
+        snyk config set disableSuggestions=true
+        snyk auth $<<parameters.token-variable>>
