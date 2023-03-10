@@ -69,6 +69,12 @@ parameters:
     default: "10m"
 steps:
   - run:
+      name: Install dependencies
+      command: |
+        if [[ "<<parameters.os>>" == "alpine" && "<<parameters.install-alpine-dependencies>>" == "true" ]]; then
+          apk add -q --no-progress --no-cache curl wget libstdc++ sudo
+        fi
+  - run:
       name: Store Snyk CLI version as a temporary checksum file
       environment:
         SNYK_CLI_VERSION: <<parameters.cli-version>>
@@ -89,9 +95,6 @@ steps:
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: |
         if [[ ! -x "/tmp/snyk" ]]; then
-          if [[ "<<parameters.os>>" == "alpine" && "<<parameters.install-alpine-dependencies>>" == "true" ]]; then
-            apk add -q --no-progress --no-cache curl wget libstdc++ sudo
-          fi
           SNYK_CLI_VERSION=$(cat "/tmp/.snyk-version")
           echo "Downloading Snyk CLI version ${SNYK_CLI_VERSION}"
           curl -sO --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>
