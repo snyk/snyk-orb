@@ -1,0 +1,22 @@
+description: >
+  Alternatively, you can use the Snyk orb to only install the Snyk CLI, and then run the Snyk CLI commands in your own steps.
+usage:
+  version: 2.1
+
+  orbs:
+    snyk: snyk/snyk@x.y.z
+
+  jobs:
+    build:
+      docker:
+        - image: cimg/node:lts
+      steps:
+        - checkout
+        - run: npm ci
+        - snyk/install
+        - run:
+            name: Which version of snyk is installed
+            command: snyk version
+        - run:
+            name: Run code scan
+            command: snyk code test
