@@ -95,7 +95,7 @@ jobs:
       - run:
           name: Run semantic-release in --dry-run mode to capture info about next release version
           command: |
-            npx -p @semantic-release/git -p semantic-release semantic-release --branch ${CIRCLE_BRANCH} --dry-run > sem-rel-dry-run.txt
+            npx -p @semantic-release/git@10.0.1 -p semantic-release@21.0.2 semantic-release --branches ${CIRCLE_BRANCH} --dry-run > sem-rel-dry-run.txt
             cat sem-rel-dry-run.txt
       - run:
           name: Update Version and Release
@@ -114,7 +114,7 @@ jobs:
               echo "prod_orb_ref: ${prod_orb_ref}"
 
               # Set tag in GitHub
-              npx -p @semantic-release/git -p semantic-release semantic-release --branch ${CIRCLE_BRANCH}
+              npx -p @semantic-release/git@10.0.1 -p semantic-release@21.0.2 semantic-release --branches ${CIRCLE_BRANCH}
 
               # publish production version (needs different token)
               /usr/local/bin/circleci orb publish packed/orb.yml $prod_orb_ref --token ${CIRCLE_TOKEN}
