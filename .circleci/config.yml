@@ -65,7 +65,7 @@ jobs:
       - run:
           name: Run semantic-release in --dry-run mode to see what kind of release would be triggered
           command: |
-            npx -p @semantic-release/git -p semantic-release semantic-release --branches ${CIRCLE_BRANCH} --dry-run
+            npx -p @semantic-release/git -p semantic-release semantic-release --branches ${CIRCLE_BRANCH} --dry-run --no-ci
 
 
   # This deploys a prod version with the REPLACE_ORB_VERSION rendered in the actualy Orb yaml
