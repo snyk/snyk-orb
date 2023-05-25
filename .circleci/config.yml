@@ -61,6 +61,10 @@ jobs:
             dev_orb_ref="snyk/snyk@dev:${CIRCLE_BRANCH}"
             echo "dev_orb_ref: ${dev_orb_ref}"
             /usr/local/bin/circleci orb publish packed/orb.yml $dev_orb_ref --token ${CIRCLE_TOKEN}
+      - run:
+          name: Run semantic-release in --dry-run mode to see what kind of release would be triggered
+          command: |
+            npx -p @semantic-release/git -p semantic-release semantic-release --branch ${CIRCLE_BRANCH} --dry-run
 
 
   # This deploys a prod version with the REPLACE_ORB_VERSION rendered in the actualy Orb yaml
