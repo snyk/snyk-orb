@@ -1,10 +1,7 @@
 version: 2.1
 orbs:
-  # Your orb will be automatically injected here during the pipeline.
-  # Reference your orb's jobs and commands below as they will exist when built.
   orb-tools: circleci/orb-tools@12.0
-  # The orb definition is intentionally not included here. It will be injected into the pipeline.
-  <orb-name>: {}
+  node: circleci/node@5.1.0
 
 # Use this tag to ensure test jobs always run,
 # even though the downstream publish job will only run on release tags.
@@ -13,28 +10,29 @@ filters: &filters
     only: /.*/
 
 jobs:
-  # Create jobs to test the commands of your orbs.
-  # You may want to add additional validation steps to ensure the commands are working as expected.
   installation-test:
     docker:
       - image: cimg/base:current
     steps:
       - checkout
-      # Run your orb's commands to validate them.
       - snyk/install
   scan-test:
     docker:
       - image: cimg/base:current
     steps:
-      - checkout
-      # Run your orb's jobs to validate them.
+      - node/install
+      - run:
+          name: setup test repository
+          command: |
+            git clone https://github.com/snyk-labs/nodejs-goof
+            cd nodejs-goof
+            npm install
       - snyk/scan
 
 workflows:
   test-deploy:
     jobs:
       # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
-      # Test your orb's commands in a custom job and test your orb's jobs directly as a part of this workflow.
       - installation-test:
           context:
             - hammerhead-snyk-orb-snyk-creds
