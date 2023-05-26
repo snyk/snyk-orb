@@ -1,6 +1,7 @@
 version: 2.1
 
 orbs:
+  orb-tools: circleci/orb-tools@12.0
   node: circleci/node@5.1.0
 
 defaults: &defaults
@@ -61,7 +62,7 @@ jobs:
             dev_orb_ref="snyk/snyk@dev:${CIRCLE_BRANCH}"
             echo "dev_orb_ref: ${dev_orb_ref}"
             /usr/local/bin/circleci orb publish packed/orb.yml $dev_orb_ref --token ${CIRCLE_TOKEN}
-
+      - orb-tools/continue
 
   # This deploys a prod version with the REPLACE_ORB_VERSION rendered in the actualy Orb yaml
   # and uses semantic-release to handle the versioning.
