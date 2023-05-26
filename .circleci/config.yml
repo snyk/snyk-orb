@@ -25,6 +25,19 @@ commands:
             /usr/local/bin/circleci version
             /usr/local/bin/circleci
 
+  untar_orb:
+    description: Untar the orb
+    steps:
+      run:
+        name: Untar Orb
+        command: |
+          TMP_SRC_DIR=$(mktemp -d)
+          ORB_DIR=packed
+          tar -xzf "orb_source.tar.gz" -C "${TMP_SRC_DIR}"
+          mkdir -p "${ORB_DIR}"
+          mv "${TMP_SRC_DIR}/"* "${ORB_DIR}/"
+          rm -rf "${TMP_SRC_DIR}"
+
 jobs:
   # This deploys a dev version
   deploy-to-dev:
@@ -33,22 +46,13 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - install_cci_cli
-      - run:
-          name: Untar Orb
-          command: |
-            TMP_SRC_DIR=$(mktemp -d)
-            ORB_DIR=packed
-            tar -xzf "orb_source.tar.gz" -C "${TMP_SRC_DIR}"
-            mkdir -p "${ORB_DIR}"
-            mv "${TMP_SRC_DIR}/"* "${ORB_DIR}/"
-            rm -rf "${TMP_SRC_DIR}"
-            ls -l $ORB_DIR/orb.yml
+      - untar_orb
       - run:
           name: Deploy dev version of Orb
           command: |
             dev_orb_ref="snyk/snyk@dev:${CIRCLE_BRANCH}"
             echo "dev_orb_ref: ${dev_orb_ref}"
-            ls -rl 
+            ls -Rl 
             /usr/local/bin/circleci orb publish packed/orb.yml $dev_orb_ref --token ${CIRCLE_TOKEN}
 
   # This deploys a prod version with the REPLACE_ORB_VERSION rendered in the actualy Orb yaml
@@ -64,17 +68,6 @@ jobs:
           name: See files after attach_workspace
           command: |
             ls -la
-      - run:
-          name: Untar Orb
-          command: |
-            TMP_SRC_DIR=$(mktemp -d)
-            ORB_DIR=packed
-            tar -xzf "${ORB_DIR}/orb_source.tar.gz" -C "${TMP_SRC_DIR}"
-            rm -rf "${ORB_DIR}"
-            mkdir -p "${ORB_DIR}"
-            mv "${TMP_SRC_DIR}/"* "${ORB_DIR}/"
-            rm -rf "${TMP_SRC_DIR}"
-            ls -l $ORB_DIR/orb.yml
       - node/install
       - run:
           name: Check Node environment
@@ -82,6 +75,7 @@ jobs:
             echo node version: $(node --version)
             echo npx version: $(npx --version)
       - install_cci_cli
+      - untar_orb
       - run:
           name: See the packed Orb # make sure it's here because of the attach_workspace
           command: |
