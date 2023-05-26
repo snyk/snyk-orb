@@ -26,7 +26,6 @@ commands:
             /usr/local/bin/circleci
 
 jobs:
-
   # This renders all the relavent Orb files into a single file - packed/orb.yml
   pack-orb:
     <<: *defaults
@@ -62,10 +61,6 @@ jobs:
             dev_orb_ref="snyk/snyk@dev:${CIRCLE_BRANCH}"
             echo "dev_orb_ref: ${dev_orb_ref}"
             /usr/local/bin/circleci orb publish packed/orb.yml $dev_orb_ref --token ${CIRCLE_TOKEN}
-      - orb-tools/continue:
-          filters:
-            tags:
-              only: /.*/
 
   # This deploys a prod version with the REPLACE_ORB_VERSION rendered in the actualy Orb yaml
   # and uses semantic-release to handle the versioning.
@@ -136,6 +131,11 @@ workflows:
             - orb-publishing
           requires:
             - pack-orb
+      - orb-tools/continue:
+          filters:
+            branches:
+              ignore: master
+
       - prod-release:
           context:
             - nodejs-lib-release
