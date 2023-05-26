@@ -1,5 +1,5 @@
 version: 2.1
-
+setup: true
 orbs:
   orb-tools: circleci/orb-tools@12.0.3
   node: circleci/node@5.1.0
