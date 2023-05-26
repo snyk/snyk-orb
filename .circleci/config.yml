@@ -132,6 +132,8 @@ workflows:
           requires:
             - pack-orb
       - orb-tools/continue:
+          requires:
+            - dev
           orb_name: snyk
           pipeline_number: << pipeline.number >>
           vcs_type: github
