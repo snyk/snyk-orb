@@ -1,11 +1,12 @@
   version: 2.1
+  orbs:
+    snyk: snyk@dev:<<pipeline.git.revision>>
 
   jobs:
     install:
       docker:
         - image: cimg/base:current
       resource_class: small
-      context:
       steps:
         - checkout
         - snyk/install
