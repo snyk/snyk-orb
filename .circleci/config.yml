@@ -38,8 +38,7 @@ jobs:
           command: |
             TMP_SRC_DIR=$(mktemp -d)
             ORB_DIR=packed
-            tar -xzf "${ORB_DIR}/orb_source.tar.gz" -C "${TMP_SRC_DIR}"
-            rm -rf "${ORB_DIR}"
+            tar -xzf "orb_source.tar.gz" -C "${TMP_SRC_DIR}"
             mkdir -p "${ORB_DIR}"
             mv "${TMP_SRC_DIR}/"* "${ORB_DIR}/"
             rm -rf "${TMP_SRC_DIR}"
