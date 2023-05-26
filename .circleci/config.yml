@@ -20,7 +20,7 @@ commands:
             # this succesfully installs the new cci CLI to /usr/local/bin/circleci
             # however, the orig (/usr/bin/circleci) remains in the path
             # so need to use the full path to circleci
-
+  
             which /usr/local/bin/circleci
             /usr/local/bin/circleci version
             /usr/local/bin/circleci
@@ -34,16 +34,16 @@ jobs:
           at: ~/repo
       - install_cci_cli
       - run:
-        name: Untar Orb
-        command: |
-          TMP_SRC_DIR=$(mktemp -d)
-          ORB_DIR=packed
-          tar -xzf "${ORB_DIR}/orb_source.tar.gz" -C "${TMP_SRC_DIR}"
-          rm -rf "${ORB_DIR}"
-          mkdir -p "${ORB_DIR}"
-          mv "${TMP_SRC_DIR}/"* "${ORB_DIR}/"
-          rm -rf "${TMP_SRC_DIR}"
-          ls -l $ORB_DIR/orb.yml
+          name: Untar Orb
+          command: |
+            TMP_SRC_DIR=$(mktemp -d)
+            ORB_DIR=packed
+            tar -xzf "${ORB_DIR}/orb_source.tar.gz" -C "${TMP_SRC_DIR}"
+            rm -rf "${ORB_DIR}"
+            mkdir -p "${ORB_DIR}"
+            mv "${TMP_SRC_DIR}/"* "${ORB_DIR}/"
+            rm -rf "${TMP_SRC_DIR}"
+            ls -l $ORB_DIR/orb.yml
       - run:
           name: Deploy dev version of Orb
           command: |
@@ -142,7 +142,6 @@ workflows:
               ignore: master
       - deploy-to-dev:
           context:
-            - nodejs-lib-release
             - orb-publishing
           requires:
             - orb-tools/continue
