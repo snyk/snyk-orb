@@ -1,0 +1,22 @@
+  version: 2.1
+
+  jobs:
+    install:
+      docker:
+        - image: cimg/base:current
+      resource_class: small
+      context:
+      steps:
+        - checkout
+        - snyk/install
+        - run:
+            name: Is the command available
+            command: command -v snyk
+        - run:
+            name: Which version of snyk is installed
+            command: snyk -v
+
+  workflows:
+    test-deploy:
+      jobs:
+        - install
