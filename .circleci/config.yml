@@ -105,11 +105,13 @@ workflows:
     jobs:
       - orb-tools/pack:
           orb_dir: packed
+          orb_file_name: orb.yml
       - orb-tools/continue:
           requires:
             - orb-tools/pack
           orb_name: snyk
           orb_dir: packed
+          orb_file_name: orb.yml
           pipeline_number: << pipeline.number >>
           vcs_type: github
           filters:
