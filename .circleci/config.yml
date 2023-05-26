@@ -26,28 +26,6 @@ commands:
             /usr/local/bin/circleci
 
 jobs:
-  # This renders all the relavent Orb files into a single file - packed/orb.yml
-  pack-orb:
-    <<: *defaults
-    steps:
-      - checkout
-      - run:
-          name: See files after checkout
-          command: |
-            ls -la
-      - install_cci_cli
-      - run:
-          name: Pack the Orb
-          command: |
-            mkdir packed
-            /usr/local/bin/circleci orb pack src >> packed/orb.yml
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-      - store_artifacts:
-          path: packed/orb.yml
-
   # This deploys a dev version
   dev:
     <<: *defaults
@@ -125,19 +103,23 @@ jobs:
 workflows:
   btd:
     jobs:
-      - pack-orb
-      - dev:
-          context:
-            - orb-publishing
-          requires:
-            - pack-orb
+      - orb-tools/pack:
+          orb_dir: packed
       - orb-tools/continue:
           requires:
-            - pack-orb
+            - orb-tools/pack
           orb_name: snyk
           orb_dir: packed
           pipeline_number: << pipeline.number >>
           vcs_type: github
+          filters:
+            branches:
+              ignore: master
+      - dev:
+          context:
+            - orb-publishing
+          requires:
+            - orb-tools/continue
           filters:
             branches:
               ignore: master
@@ -147,7 +129,7 @@ workflows:
             - nodejs-lib-release
             - orb-publishing
           requires:
-            - pack-orb
+            - orb-tools/pack
           filters:
             branches:
               only: master
