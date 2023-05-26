@@ -34,6 +34,17 @@ jobs:
           at: ~/repo
       - install_cci_cli
       - run:
+        name: Untar Orb
+        command: |
+          TMP_SRC_DIR=$(mktemp -d)
+          ORB_DIR=packed
+          tar -xzf "${ORB_DIR}/orb_source.tar.gz" -C "${TMP_SRC_DIR}"
+          rm -rf "${ORB_DIR}"
+          mkdir -p "${ORB_DIR}"
+          mv "${TMP_SRC_DIR}/"* "${ORB_DIR}/"
+          rm -rf "${TMP_SRC_DIR}"
+          ls -l $ORB_DIR/orb.yml
+      - run:
           name: Deploy dev version of Orb
           command: |
             dev_orb_ref="snyk/snyk@dev:${CIRCLE_BRANCH}"
@@ -54,6 +65,17 @@ jobs:
           name: See files after attach_workspace
           command: |
             ls -la
+      - run:
+          name: Untar Orb
+          command: |
+            TMP_SRC_DIR=$(mktemp -d)
+            ORB_DIR=packed
+            tar -xzf "${ORB_DIR}/orb_source.tar.gz" -C "${TMP_SRC_DIR}"
+            rm -rf "${ORB_DIR}"
+            mkdir -p "${ORB_DIR}"
+            mv "${TMP_SRC_DIR}/"* "${ORB_DIR}/"
+            rm -rf "${TMP_SRC_DIR}"
+            ls -l $ORB_DIR/orb.yml
       - node/install
       - run:
           name: Check Node environment
@@ -120,6 +142,7 @@ workflows:
               ignore: master
       - deploy-to-dev:
           context:
+            - nodejs-lib-release
             - orb-publishing
           requires:
             - orb-tools/continue
