@@ -16,8 +16,6 @@ jobs:
   # Create jobs to test the commands of your orbs.
   # You may want to add additional validation steps to ensure the commands are working as expected.
   command-test:
-    context:
-      - hammerhead-snyk-orb-snyk-creds
     docker:
       - image: cimg/base:current
     steps:
@@ -30,4 +28,6 @@ workflows:
       # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
       # Test your orb's commands in a custom job and test your orb's jobs directly as a part of this workflow.
       - command-test:
+          context:
+            - hammerhead-snyk-orb-snyk-creds
           filters: *filters
