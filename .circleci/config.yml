@@ -38,6 +38,7 @@ jobs:
           command: |
             dev_orb_ref="snyk/snyk@dev:${CIRCLE_BRANCH}"
             echo "dev_orb_ref: ${dev_orb_ref}"
+            ls -l packed
             /usr/local/bin/circleci orb publish packed/orb.yml $dev_orb_ref --token ${CIRCLE_TOKEN}
 
   # This deploys a prod version with the REPLACE_ORB_VERSION rendered in the actualy Orb yaml
