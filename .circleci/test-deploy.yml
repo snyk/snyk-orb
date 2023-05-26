@@ -22,12 +22,17 @@ jobs:
     steps:
       - node/install
       - run:
-          name: setup test repository
+          name: Setup test repository
           command: |
             git clone https://github.com/snyk-labs/nodejs-goof
             cd nodejs-goof
             npm install
-      - snyk/scan
+      - snyk/scan:
+          fail-on-issues: false
+          monitor-on-build: false
+          target-file: nodejs-goof/package.json
+
+
 
 workflows:
   test-deploy:
