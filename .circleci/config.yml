@@ -133,7 +133,7 @@ workflows:
             - pack-orb
       - orb-tools/continue:
           requires:
-            - orb-tools/pack
+            - pack-orb
           orb_name: snyk
           orb_dir: packed
           pipeline_number: << pipeline.number >>
