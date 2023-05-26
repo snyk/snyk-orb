@@ -28,15 +28,15 @@ commands:
   untar_orb:
     description: Untar the orb
     steps:
-      run:
-        name: Untar Orb
-        command: |
-          TMP_SRC_DIR=$(mktemp -d)
-          ORB_DIR=packed
-          tar -xzf "orb_source.tar.gz" -C "${TMP_SRC_DIR}"
-          mkdir -p "${ORB_DIR}"
-          mv "${TMP_SRC_DIR}/"* "${ORB_DIR}/"
-          rm -rf "${TMP_SRC_DIR}"
+      - run:
+          name: Untar Orb
+          command: |
+            TMP_SRC_DIR=$(mktemp -d)
+            ORB_DIR=packed
+            tar -xzf "orb_source.tar.gz" -C "${TMP_SRC_DIR}"
+            mkdir -p "${ORB_DIR}"
+            mv "${TMP_SRC_DIR}/"* "${ORB_DIR}/"
+            rm -rf "${TMP_SRC_DIR}"
 
 jobs:
   # This deploys a dev version
