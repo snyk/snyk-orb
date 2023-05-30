@@ -38,13 +38,34 @@ commands:
             mv "${TMP_SRC_DIR}/"* "${ORB_DIR}/"
             rm -rf "${TMP_SRC_DIR}"
 
+  semantic_release_dry_run:
+    description: Run semantic-release in --dry-run mode to capture info about next release version
+    steps:
+      - run:
+          name: Run semantic release in dry-run mode
+          command: |
+            npx -p @semantic-release/git@10.0.1 -p semantic-release@21.0.2 semantic-release --branches ${CIRCLE_BRANCH} --dry-run
+
+  check_node:
+    description: Check node environment
+    steps:
+      - run:
+          name: Check Node environment
+          command: |
+            echo node version: $(node --version)
+            echo npx version: $(npx --version)
+
 jobs:
   # This deploys a dev version
   deploy-to-dev:
     <<: *defaults
     steps:
+      - checkout
       - attach_workspace:
           at: ~/repo
+      - node/install
+      - check_node
+      - semantic_release_dry_run
       - install_cci_cli
       - untar_orb
       - run:
@@ -62,6 +83,7 @@ jobs:
   prod-release:
     <<: *defaults
     steps:
+      - checkout
       - attach_workspace:
           at: ~/repo
       - run:
@@ -69,11 +91,7 @@ jobs:
           command: |
             ls -la
       - node/install
-      - run:
-          name: Check Node environment
-          command: |
-            echo node version: $(node --version)
-            echo npx version: $(npx --version)
+      - check_node
       - install_cci_cli
       - untar_orb
       - run:
@@ -85,11 +103,7 @@ jobs:
           command: |
             mkdir ~/.ssh
             ssh-keyscan github.com > ~/.ssh/known_hosts
-      - run:
-          name: Run semantic-release in --dry-run mode to capture info about next release version
-          command: |
-            npx -p @semantic-release/git@10.0.1 -p semantic-release@21.0.2 semantic-release --branches ${CIRCLE_BRANCH} --dry-run > sem-rel-dry-run.txt
-            cat sem-rel-dry-run.txt
+      - semantic_release_dry_run
       - run:
           name: Update Version and Release
           command: |
@@ -135,6 +149,7 @@ workflows:
               ignore: master
       - deploy-to-dev:
           context:
+            - team-hammerhead-common-deploy-tokens
             - orb-publishing
           requires:
             - orb-tools/continue
@@ -144,7 +159,7 @@ workflows:
 
       - prod-release:
           context:
-            - nodejs-lib-release
+            - team-hammerhead-common-deploy-tokens
             - orb-publishing
           requires:
             - orb-tools/pack
