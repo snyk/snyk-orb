@@ -149,6 +149,7 @@ workflows:
               ignore: master
       - deploy-to-dev:
           context:
+            - nodejs-lib-release
             - orb-publishing
           requires:
             - orb-tools/continue
