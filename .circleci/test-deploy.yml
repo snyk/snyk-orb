@@ -1,0 +1,49 @@
+version: 2.1
+orbs:
+  orb-tools: circleci/orb-tools@12.0
+  node: circleci/node@5.1.0
+
+# Use this tag to ensure test jobs always run,
+# even though the downstream publish job will only run on release tags.
+filters: &filters
+  tags:
+    only: /.*/
+
+jobs:
+  installation-test:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - snyk/install
+  scan-test:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - node/install
+      - run:
+          name: Setup test repository
+          command: |
+            git clone https://github.com/snyk-labs/nodejs-goof
+            cd nodejs-goof
+            npm install
+      - snyk/scan:
+          fail-on-issues: false
+          monitor-on-build: false
+          target-file: nodejs-goof/package.json
+
+
+
+workflows:
+  test-deploy:
+    jobs:
+      # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
+      - installation-test:
+          context:
+            - hammerhead-snyk-orb-snyk-creds
+          filters: *filters
+      - scan-test:
+          requires: [installation-test]
+          context:
+            - hammerhead-snyk-orb-snyk-creds
+          filters: *filters

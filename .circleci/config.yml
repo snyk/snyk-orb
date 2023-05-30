@@ -1,11 +1,12 @@
 version: 2.1
-
+setup: true
 orbs:
-  node: circleci/node@4.0.0
+  orb-tools: circleci/orb-tools@12.0.3
+  node: circleci/node@5.1.0
 
 defaults: &defaults
   docker:
-    - image: cimg/base:stable-20.04
+    - image: cimg/base:current
   working_directory: ~/repo
 
 commands:
@@ -19,49 +20,40 @@ commands:
             # this succesfully installs the new cci CLI to /usr/local/bin/circleci
             # however, the orig (/usr/bin/circleci) remains in the path
             # so need to use the full path to circleci
-
+  
             which /usr/local/bin/circleci
             /usr/local/bin/circleci version
             /usr/local/bin/circleci
 
-jobs:
-
-  # This renders all the relavent Orb files into a single file - packed/orb.yml
-  pack-orb:
-    <<: *defaults
+  untar_orb:
+    description: Untar the orb
     steps:
-      - checkout
       - run:
-          name: See files after checkout
+          name: Untar Orb
           command: |
-            ls -la
-      - install_cci_cli
-      - run:
-          name: Pack the Orb
-          command: |
-            mkdir packed
-            /usr/local/bin/circleci orb pack src >> packed/orb.yml
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
-      - store_artifacts:
-          path: packed/orb.yml
+            TMP_SRC_DIR=$(mktemp -d)
+            ORB_DIR=packed
+            tar -xzf "orb_source.tar.gz" -C "${TMP_SRC_DIR}"
+            mkdir -p "${ORB_DIR}"
+            mv "${TMP_SRC_DIR}/"* "${ORB_DIR}/"
+            rm -rf "${TMP_SRC_DIR}"
 
+jobs:
   # This deploys a dev version
-  dev:
+  deploy-to-dev:
     <<: *defaults
     steps:
       - attach_workspace:
           at: ~/repo
       - install_cci_cli
+      - untar_orb
       - run:
           name: Deploy dev version of Orb
           command: |
             dev_orb_ref="snyk/snyk@dev:${CIRCLE_BRANCH}"
             echo "dev_orb_ref: ${dev_orb_ref}"
+            ls -Rl 
             /usr/local/bin/circleci orb publish packed/orb.yml $dev_orb_ref --token ${CIRCLE_TOKEN}
-
 
   # This deploys a prod version with the REPLACE_ORB_VERSION rendered in the actualy Orb yaml
   # and uses semantic-release to handle the versioning.
@@ -83,6 +75,7 @@ jobs:
             echo node version: $(node --version)
             echo npx version: $(npx --version)
       - install_cci_cli
+      - untar_orb
       - run:
           name: See the packed Orb # make sure it's here because of the attach_workspace
           command: |
@@ -126,18 +119,35 @@ jobs:
 workflows:
   btd:
     jobs:
-      - pack-orb
-      - dev:
+      - orb-tools/pack:
+          orb_dir: packed
+          orb_file_name: orb.yml
+      - orb-tools/continue:
+          requires:
+            - orb-tools/pack
+          orb_name: snyk
+          orb_dir: packed
+          orb_file_name: orb.yml
+          pipeline_number: << pipeline.number >>
+          vcs_type: github
+          filters:
+            branches:
+              ignore: master
+      - deploy-to-dev:
           context:
             - orb-publishing
           requires:
-            - pack-orb
+            - orb-tools/continue
+          filters:
+            branches:
+              ignore: master
+
       - prod-release:
           context:
             - nodejs-lib-release
             - orb-publishing
           requires:
-            - pack-orb
+            - orb-tools/pack
           filters:
             branches:
               only: master
