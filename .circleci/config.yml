@@ -149,7 +149,7 @@ workflows:
               ignore: master
       - deploy-to-dev:
           context:
-            - nodejs-lib-release
+            - team-hammerhead-common-deploy-tokens
             - orb-publishing
           requires:
             - orb-tools/continue
@@ -159,7 +159,7 @@ workflows:
 
       - prod-release:
           context:
-            - nodejs-lib-release
+            - team-hammerhead-common-deploy-tokens
             - orb-publishing
           requires:
             - orb-tools/pack
