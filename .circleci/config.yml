@@ -44,7 +44,8 @@ commands:
       - run:
           name: Run semantic release in dry-run mode
           command: |
-            npx -p @semantic-release/git@10.0.1 -p semantic-release@21.0.2 semantic-release --branches ${CIRCLE_BRANCH} --dry-run
+            npx -p @semantic-release/git@10.0.1 -p semantic-release@21.0.2 semantic-release --branches ${CIRCLE_BRANCH} --dry-run > sem-rel-dry-run.txt
+            cat sem-rel-dry-run.txt
 
   check_node:
     description: Check node environment
