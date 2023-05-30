@@ -101,7 +101,7 @@ jobs:
       - run:
           name: Add github.com to known_hosts # Because without this sometime you get errors connecting to GitHub (for writing the tag)
           command: |
-            mkdir ~/.ssh
+            mkdir -p ~/.ssh
             ssh-keyscan github.com > ~/.ssh/known_hosts
       - semantic_release_dry_run
       - run:
