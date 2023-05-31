@@ -74,3 +74,8 @@ workflows:
           context:
             - hammerhead-snyk-orb-snyk-creds
           filters: *filters
+
+      - scan-test-old-curl-no-cache:
+          context:
+            - hammerhead-snyk-orb-snyk-creds
+          filters: *filters
