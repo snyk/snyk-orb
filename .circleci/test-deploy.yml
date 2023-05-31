@@ -24,7 +24,7 @@ commands:
         - run:
             name: Setup test repository
             command: |
-              git clone https://github.com/snyk-labs/nodejs-goof
+              git clone https://github.com/snyk-labs/nodejs-goof || echo "Repository already exists, no cloning needed."
               cd nodejs-goof
               npm install
         - snyk/scan:
