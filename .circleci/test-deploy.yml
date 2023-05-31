@@ -12,6 +12,10 @@ filters: &filters
 commands:
   scan:
     description: test the scan functionality
+    parameters:
+      no-cache:
+        type: boolean
+        default: false
     steps:
         - node/install
         - run:
@@ -24,6 +28,7 @@ commands:
             fail-on-issues: false
             monitor-on-build: false
             target-file: nodejs-goof/package.json
+            no-cache: << parameters.no-cache >>
 
 jobs:
   installation-test:
