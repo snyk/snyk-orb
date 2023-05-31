@@ -45,6 +45,13 @@ jobs:
     steps:
       - scan
 
+  scan-test-no-cache:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - scan:
+          no-cache: true
+
 workflows:
   test-deploy:
     jobs:
@@ -52,7 +59,13 @@ workflows:
           context:
             - hammerhead-snyk-orb-snyk-creds
           filters: *filters
+
       - scan-test-old-curl:
+          context:
+            - hammerhead-snyk-orb-snyk-creds
+          filters: *filters
+
+      - scan-test-no-cache:
           context:
             - hammerhead-snyk-orb-snyk-creds
           filters: *filters

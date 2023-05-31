@@ -54,6 +54,11 @@ parameters:
     description: Refer to the Snyk CLI help page for information on additional arguments.
     type: string
     default: ""
+  no-cache:
+    description: >
+      Disable caching of the Snyk CLI installation
+    type: boolean
+    default: false
   os:
     description: The CLI OS version to download
     type: enum
@@ -74,6 +79,7 @@ steps:
       os: <<parameters.os>>
       install-alpine-dependencies: <<parameters.install-alpine-dependencies>>
       token-variable: <<parameters.token-variable>>
+      no-cache: <<parameters.no-cache>>
   # snyk test
   - run:
       name: "Run Snyk"

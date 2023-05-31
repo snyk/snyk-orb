@@ -12,6 +12,11 @@ parameters:
       The version of the Snyk CLI you are using.
     type: string
     default: ""
+  no-cache:
+    description: >
+      Disable cache for the Snyk CLI installation.
+    type: boolean
+    default: false
   os:
     description: The CLI OS version to download
     type: enum
@@ -48,7 +53,7 @@ steps:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: |
-        if [[ ! -x "/tmp/snyk" ]]; then
+        if [[ ! -x "/tmp/snyk" ]] || [[ parameters.no-cache ]]; then
           SNYK_CLI_VERSION=$(cat "/tmp/.snyk-version")
           echo "Downloading Snyk CLI version ${SNYK_CLI_VERSION}"
           curl -O --compressed --retry 6 --retry-all-errors https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>> || curl -O --compressed --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>
