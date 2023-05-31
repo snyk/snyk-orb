@@ -16,6 +16,9 @@ commands:
       no-cache:
         type: boolean
         default: false
+      test-param-fail-on-no-cache-used:
+        type: boolean
+        default: false
     steps:
         - node/install
         - run:
@@ -29,6 +32,7 @@ commands:
             monitor-on-build: false
             target-file: nodejs-goof/package.json
             no-cache: << parameters.no-cache >>
+            test-param-fail-on-no-cache-used: << parameters.test-param-fail-on-no-cache-used >>
 
 jobs:
   scan-test:
