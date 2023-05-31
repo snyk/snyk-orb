@@ -14,7 +14,7 @@ parameters:
     default: ""
   no-cache:
     description: >
-      Disable cache for the Snyk CLI installation.
+      Disable caching the Snyk CLI
     type: boolean
     default: false
   os:
@@ -26,7 +26,7 @@ parameters:
     description: Install additional dependencies required by the alpine cli
     type: boolean
     default: true
-  test-param-fail-on-no-cache-used:
+  test-only-param_fail-on-no-cache-used:
     description: >
       This parameter is used for testing the cache use
     type: boolean
@@ -58,15 +58,15 @@ steps:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: |
-        if <<parameters.no-cache>> && <<parameters.test-param-fail-on-no-cache-used>>
+        if <<parameters.no-cache>> && <<parameters.test-only-param_fail-on-no-cache-used>>
         then
-          echo "Cache disabled, but trying to enforce cache with test-param-fail-on-no-cache-used"
+          echo "Cache disabled, but trying to enforce cache with test-only-param_fail-on-no-cache-used"
           exit 1
         fi
         
-        if [[ ! -x "/tmp/snyk" ]] && <<parameters.test-param-fail-on-no-cache-used>> 
+        if [[ ! -x "/tmp/snyk" ]] && <<parameters.test-only-param_fail-on-no-cache-used>> 
         then
-            echo "No cached executable found. Failing as specified with test-param-fail-on-no-cache-used"
+            echo "No cached executable found. Failing as specified with test-only-param_fail-on-no-cache-used"
             exit 1
         fi
         

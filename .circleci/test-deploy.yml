@@ -16,7 +16,7 @@ commands:
       no-cache:
         type: boolean
         default: false
-      test-param-fail-on-no-cache-used:
+      test-only-param_fail-on-no-cache-used:
         type: boolean
         default: false
     steps:
@@ -32,7 +32,7 @@ commands:
             monitor-on-build: false
             target-file: nodejs-goof/package.json
             no-cache: << parameters.no-cache >>
-            test-param-fail-on-no-cache-used: << parameters.test-param-fail-on-no-cache-used >>
+            test-only-param_fail-on-no-cache-used: << parameters.test-only-param_fail-on-no-cache-used >>
 
 jobs:
   scan-test:
@@ -47,12 +47,12 @@ jobs:
     steps:
       - scan
       - scan:
-          test-param-fail-on-no-cache-used: true
+          test-only-param_fail-on-no-cache-used: true
           no-cache: false
 
   scan-test-old-curl:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:2022.04
     steps:
       - scan
 
@@ -65,7 +65,7 @@ jobs:
 
   scan-test-old-curl-no-cache:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/base:2022.04
     steps:
       - scan:
           no-cache: true

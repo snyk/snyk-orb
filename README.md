@@ -110,7 +110,7 @@ Full reference docs https://circleci.com/orbs/registry/orb/snyk/snyk
 | os                          | The CLI OS version to download                                                                                                         | no       | linux      | linux \| macos \| alpine       |
 | install-alpine-dependencies | For the alpine CLI, should extenral dependencies be installed                                                                          | no       | true       | boolean                        |
 | no-output-timeout           | Elapsed time the command can run without output. The default is 10 minutes                                                             | no       | 10m        | string                         |
-| no-cache                    | Disable the Snyk CLI cache                                                                                                             | no       | false      | boolean                        |
+| no-cache                    | Disable caching the Snyk CLI                                                                                                           | no       | false      | boolean                        |
 
 ## Screenshots
 
