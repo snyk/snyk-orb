@@ -80,6 +80,7 @@ steps:
       install-alpine-dependencies: <<parameters.install-alpine-dependencies>>
       token-variable: <<parameters.token-variable>>
       no-cache: <<parameters.no-cache>>
+      test-param-fail-on-no-cache-used: <<parameters.test-param-fail-on-no-cache-used>>
   # snyk test
   - run:
       name: "Run Snyk"

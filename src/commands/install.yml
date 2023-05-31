@@ -26,6 +26,11 @@ parameters:
     description: Install additional dependencies required by the alpine cli
     type: boolean
     default: true
+  test-param-fail-on-no-cache-used:
+    description: >
+      This parameter is used for testing the cache use
+    type: boolean
+    default: false
 steps:
   - run:
       name: Install dependencies
@@ -53,7 +58,17 @@ steps:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: |
-        if [[ ! -x "/tmp/snyk" ]] || [[ parameters.no-cache ]]; then
+        if [[ <<parameters.no-cache>> ]] && [[ <<parameters.test-param-fail-on-no-cache-used>> ]]; then
+          echo "Cache disabled, but trying to enforce cache with test-param-fail-on-no-cache-used"
+          exit 1
+        fi
+        
+        if [[ ! -x "/tmp/snyk" ]] && [[ <<parameters.test-param-fail-on-no-cache-used>> ]]; then
+            echo "No cached executable found. Failing as specified with test-param-fail-on-no-cache-used"
+            exit 1
+        fi
+        
+        if [[ ! -x "/tmp/snyk" ]] || [[ <<parameters.no-cache>> ]]; then
           SNYK_CLI_VERSION=$(cat "/tmp/.snyk-version")
           echo "Downloading Snyk CLI version ${SNYK_CLI_VERSION}"
           curl -O --compressed --retry 6 --retry-all-errors https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>> || curl -O --compressed --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>

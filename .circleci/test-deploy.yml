@@ -37,6 +37,15 @@ jobs:
     steps:
       - scan
 
+  scan-test-ensure-cache-used:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - scan
+      - scan:
+          test-param-fail-on-no-cache-used: true
+          no-cache: false
+
   scan-test-old-curl:
     docker:
       - image: cimg/base:stable
@@ -76,6 +85,11 @@ workflows:
           filters: *filters
 
       - scan-test-old-curl-no-cache:
+          context:
+            - hammerhead-snyk-orb-snyk-creds
+          filters: *filters
+
+      - scan-test-ensure-cache-used:
           context:
             - hammerhead-snyk-orb-snyk-creds
           filters: *filters
