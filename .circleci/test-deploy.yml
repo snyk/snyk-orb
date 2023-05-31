@@ -31,13 +31,6 @@ commands:
             no-cache: << parameters.no-cache >>
 
 jobs:
-  installation-test:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - checkout
-      - snyk/install
-
   scan-test:
     docker:
       - image: cimg/base:current
@@ -51,6 +44,13 @@ jobs:
       - scan
 
   scan-test-no-cache:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - scan:
+          no-cache: true
+
+  scan-test-old-curl-no-cache:
     docker:
       - image: cimg/base:stable
     steps:
