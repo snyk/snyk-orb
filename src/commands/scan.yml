@@ -54,6 +54,11 @@ parameters:
     description: Refer to the Snyk CLI help page for information on additional arguments.
     type: string
     default: ""
+  no-cache:
+    description: >
+      Disable caching the Snyk CLI
+    type: boolean
+    default: false
   os:
     description: The CLI OS version to download
     type: enum
@@ -67,6 +72,12 @@ parameters:
     description: Elapsed time the command can run without output. The default is 10 minutes.
     type: string
     default: "10m"
+  test-only-param_fail-on-no-cache-used:
+    description: >
+      This parameter is used to test the no-cache functionality.
+      It should not be used in production.
+    type: boolean
+    default: false
 steps:
   # install snyk
   - install:
@@ -74,6 +85,8 @@ steps:
       os: <<parameters.os>>
       install-alpine-dependencies: <<parameters.install-alpine-dependencies>>
       token-variable: <<parameters.token-variable>>
+      no-cache: <<parameters.no-cache>>
+      test-only-param_fail-on-no-cache-used: <<parameters.test-only-param_fail-on-no-cache-used>>
   # snyk test
   - run:
       name: "Run Snyk"

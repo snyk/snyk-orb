@@ -9,41 +9,91 @@ filters: &filters
   tags:
     only: /.*/
 
-jobs:
-  installation-test:
-    docker:
-      - image: cimg/base:current
+commands:
+  scan:
+    description: test the scan functionality
+    parameters:
+      no-cache:
+        type: boolean
+        default: false
+      test-only-param_fail-on-no-cache-used:
+        type: boolean
+        default: false
     steps:
-      - checkout
-      - snyk/install
+        - node/install
+        - run:
+            name: Setup test repository
+            command: |
+              git clone https://github.com/snyk-labs/nodejs-goof || echo "Repository already exists, no cloning needed."
+              cd nodejs-goof
+              npm install
+        - snyk/scan:
+            fail-on-issues: false
+            monitor-on-build: false
+            target-file: nodejs-goof/package.json
+            no-cache: << parameters.no-cache >>
+            test-only-param_fail-on-no-cache-used: << parameters.test-only-param_fail-on-no-cache-used >>
+
+jobs:
   scan-test:
     docker:
       - image: cimg/base:current
     steps:
-      - node/install
-      - run:
-          name: Setup test repository
-          command: |
-            git clone https://github.com/snyk-labs/nodejs-goof
-            cd nodejs-goof
-            npm install
-      - snyk/scan:
-          fail-on-issues: false
-          monitor-on-build: false
-          target-file: nodejs-goof/package.json
+      - scan
 
+  scan-test-ensure-cache-used:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - scan
+      - scan:
+          test-only-param_fail-on-no-cache-used: true
+          no-cache: false
 
+  scan-test-old-curl:
+    docker:
+      - image: cimg/base:2022.04
+    steps:
+      - scan
+
+  scan-test-no-cache:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - scan:
+          no-cache: true
+
+  scan-test-old-curl-no-cache:
+    docker:
+      - image: cimg/base:2022.04
+    steps:
+      - scan:
+          no-cache: true
 
 workflows:
   test-deploy:
     jobs:
-      # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
-      - installation-test:
+      - scan-test:
           context:
             - hammerhead-snyk-orb-snyk-creds
           filters: *filters
-      - scan-test:
-          requires: [installation-test]
+
+      - scan-test-old-curl:
+          context:
+            - hammerhead-snyk-orb-snyk-creds
+          filters: *filters
+
+      - scan-test-no-cache:
+          context:
+            - hammerhead-snyk-orb-snyk-creds
+          filters: *filters
+
+      - scan-test-old-curl-no-cache:
+          context:
+            - hammerhead-snyk-orb-snyk-creds
+          filters: *filters
+
+      - scan-test-ensure-cache-used:
           context:
             - hammerhead-snyk-orb-snyk-creds
           filters: *filters

@@ -12,6 +12,11 @@ parameters:
       The version of the Snyk CLI you are using.
     type: string
     default: ""
+  no-cache:
+    description: >
+      Disable caching the Snyk CLI
+    type: boolean
+    default: false
   os:
     description: The CLI OS version to download
     type: enum
@@ -21,6 +26,11 @@ parameters:
     description: Install additional dependencies required by the alpine cli
     type: boolean
     default: true
+  test-only-param_fail-on-no-cache-used:
+    description: >
+      This parameter is used for testing the cache use
+    type: boolean
+    default: false
 steps:
   - run:
       name: Install dependencies
@@ -34,7 +44,7 @@ steps:
         SNYK_CLI_VERSION: <<parameters.cli-version>>
       command: |
         if [[ -z "${SNYK_CLI_VERSION}" ]]; then
-          curl --compressed --retry 6 --retry-all-errors https://static.snyk.io/cli/latest/version > /tmp/.snyk-version
+          curl --compressed --retry 6 --retry-all-errors https://static.snyk.io/cli/latest/version > /tmp/.snyk-version || curl --compressed --retry 6 https://static.snyk.io/cli/latest/version > /tmp/.snyk-version
         else
           echo "${SNYK_CLI_VERSION}" >> /tmp/.snyk-version
         fi        
@@ -48,11 +58,24 @@ steps:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: |
-        if [[ ! -x "/tmp/snyk" ]]; then
+        if <<parameters.no-cache>> && <<parameters.test-only-param_fail-on-no-cache-used>>
+        then
+          echo "Cache disabled, but trying to enforce cache with test-only-param_fail-on-no-cache-used"
+          exit 1
+        fi
+        
+        if [[ ! -x "/tmp/snyk" ]] && <<parameters.test-only-param_fail-on-no-cache-used>> 
+        then
+            echo "No cached executable found. Failing as specified with test-only-param_fail-on-no-cache-used"
+            exit 1
+        fi
+        
+        if [[ ! -x "/tmp/snyk" ]] || <<parameters.no-cache>>
+        then
           SNYK_CLI_VERSION=$(cat "/tmp/.snyk-version")
           echo "Downloading Snyk CLI version ${SNYK_CLI_VERSION}"
-          curl -O --compressed --retry 6 --retry-all-errors https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>
-          curl -O --compressed --retry 6 --retry-all-errors https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>.sha256
+          curl -O --compressed --retry 6 --retry-all-errors https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>> || curl -O --compressed --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>
+          curl -O --compressed --retry 6 --retry-all-errors https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>.sha256 || curl -O --compressed --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>.sha256
           sha256sum -c snyk-<<parameters.os>>.sha256
           sudo mv snyk-<<parameters.os>> /tmp/snyk
           sudo chmod +x /tmp/snyk

@@ -26,17 +26,17 @@ All you need to do is:
 ```yaml
 version: 2.1
 
-  orbs:
-    snyk: snyk/snyk@x.y.z
+orbs:
+  snyk: snyk/snyk@x.y.z
 
-  jobs:
-    build:
-      docker:
-        - image: circleci/node:4.8.2
-      steps:
-        - checkout
-        - run: npm install -q
-        - snyk/scan
+jobs:
+ build:
+   docker:
+     - image: circleci/node:4.8.2
+   steps:
+     - checkout
+     - run: npm install -q
+     - snyk/scan
 ```
 
 ### Scan Docker Image
@@ -71,10 +71,10 @@ jobs:
 version: 2.1
 
 orbs:
-snyk: snyk/snyk@x.y.z
+  snyk: snyk/snyk@x.y.z
 
 jobs:
-build:
+  build:
     docker:
     - image: circleci/node:4.8.2
     steps:
@@ -95,21 +95,22 @@ build:
 
 Full reference docs https://circleci.com/orbs/registry/orb/snyk/snyk
 
-| Parameter                   | Description                                                                                                                            | Required | Default    | Type         |
-|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------|----------|------------|--------------|
-| command                     | The CLI command (i.e. "test", "iac test") to execute                                                                                   | no       | test       | string       |
-| token-variable              | Name of env var containing your Snyk API token                                                                                         | no       | SNYK_TOKEN | env_var_name |
-| severity-threshold          | Only report vulnerabilities of provided level or higher (low/medium/high/critical)                                                     | no       | low        | low \        | med \| high \| critical |
-| fail-on-issues              | This specifies if builds should be failed or continued based on issues found by Snyk                                                   | no       | true       | boolean      |
-| monitor-on-build            | Take a current application dependencies snapshot for continuous monitoring by Snyk, if test was succesful                              | no       | true       | boolean      |
-| target-file                 | The path to the manifest file to be used by Snyk. Should be provided if non-standard                                                   | no       | -          | string       |
-| docker-image-name           | The image name, if scanning a container image                                                                                          | no       | -          | string       |
-| organization                | The Snyk Organization ID (see Organization-level Settings tab in the Snyk UI) under which this project should be tested and monitored. | no       | -          | string       |
-| project                     | A custom name for the Snyk project to be created on snyk.io                                                                            | no       | -          | string       |
-| additional-arguments        | Refer to the Snyk CLI help page for information on additional arguments                                                                | no       | -          | string       |
-| os                          | The CLI OS version to download                                                                                                         | no       | linux      | linux \      | macos \| alpine |
-| install-alpine-dependencies | For the alpine CLI, should extenral dependencies be installed                                                                          | no       | true       | boolean      |
-| no-output-timeout           | Elapsed time the command can run without output. The default is 10 minutes                                                             | no       | 10m        | string       |
+| Parameter                   | Description                                                                                                                            | Required | Default    | Type                           |
+|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------|----------|------------|--------------------------------|
+| command                     | The CLI command (i.e. "test", "iac test") to execute                                                                                   | no       | test       | string                         |
+| token-variable              | Name of env var containing your Snyk API token                                                                                         | no       | SNYK_TOKEN | env_var_name                   |
+| severity-threshold          | Only report vulnerabilities of provided level or higher (low/medium/high/critical)                                                     | no       | low        | low \| med \| high \| critical |
+| fail-on-issues              | This specifies if builds should be failed or continued based on issues found by Snyk                                                   | no       | true       | boolean                        |
+| monitor-on-build            | Take a current application dependencies snapshot for continuous monitoring by Snyk, if test was succesful                              | no       | true       | boolean                        |
+| target-file                 | The path to the manifest file to be used by Snyk. Should be provided if non-standard                                                   | no       | -          | string                         |
+| docker-image-name           | The image name, if scanning a container image                                                                                          | no       | -          | string                         |
+| organization                | The Snyk Organization ID (see Organization-level Settings tab in the Snyk UI) under which this project should be tested and monitored. | no       | -          | string                         |
+| project                     | A custom name for the Snyk project to be created on snyk.io                                                                            | no       | -          | string                         |
+| additional-arguments        | Refer to the Snyk CLI help page for information on additional arguments                                                                | no       | -          | string                         |
+| os                          | The CLI OS version to download                                                                                                         | no       | linux      | linux \| macos \| alpine       |
+| install-alpine-dependencies | For the alpine CLI, should extenral dependencies be installed                                                                          | no       | true       | boolean                        |
+| no-output-timeout           | Elapsed time the command can run without output. The default is 10 minutes                                                             | no       | 10m        | string                         |
+| no-cache                    | Disable caching the Snyk CLI                                                                                                           | no       | false      | boolean                        |
 
 ## Screenshots
 
