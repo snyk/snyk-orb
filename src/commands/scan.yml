@@ -72,6 +72,12 @@ parameters:
     description: Elapsed time the command can run without output. The default is 10 minutes.
     type: string
     default: "10m"
+  test-param-fail-on-no-cache-used:
+    description: >
+      This parameter is used to test the no-cache functionality.
+      It should not be used in production.
+    type: boolean
+    default: false
 steps:
   # install snyk
   - install:
