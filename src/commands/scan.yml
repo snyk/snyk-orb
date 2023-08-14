@@ -54,6 +54,10 @@ parameters:
     description: Refer to the Snyk CLI help page for information on additional arguments.
     type: string
     default: ""
+  additional-monitor-arguments:
+    description: Refer to the Snyk CLI help page for information on additional arguments. These are passed only to the `snyk monitor` command.
+    type: string
+    default: ""
   no-cache:
     description: >
       Disable caching the Snyk CLI
@@ -78,6 +82,12 @@ parameters:
       It should not be used in production.
     type: boolean
     default: false
+  test-only-param_dry-run-commands:
+    description: >
+      This parameter is used to test arguments provided to the snyk commands.
+      It should not be used in production.
+    type: boolean
+    default: false
 steps:
   # install snyk
   - install:
@@ -94,6 +104,7 @@ steps:
         SNYK_INTEGRATION_NAME: CIRCLECI_ORB
         SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
       command: >
+        <<#parameters.test-only-param_dry-run-commands>>function capture() { echo "$@" | tee -a /tmp/dry-run-snyk-commands.txt; }; capture<</parameters.test-only-param_dry-run-commands>>
         snyk <<parameters.command>>
         <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
         <<#parameters.severity-threshold>>--severity-threshold=<<parameters.severity-threshold>><</parameters.severity-threshold>>
@@ -112,10 +123,12 @@ steps:
               SNYK_INTEGRATION_NAME: CIRCLECI_ORB
               SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
             command: >
+              <<#parameters.test-only-param_dry-run-commands>>function capture() { echo "$@" | tee -a /tmp/dry-run-snyk-commands.txt; }; capture<</parameters.test-only-param_dry-run-commands>>
               snyk monitor
               <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
               <<#parameters.project>>--project-name=<<parameters.project>><</parameters.project>>
               <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
               <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
               <<parameters.additional-arguments>>
+              <<parameters.additional-monitor-arguments>>
             no_output_timeout: "<<parameters.no-output-timeout>>"
