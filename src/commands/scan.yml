@@ -5,6 +5,11 @@ parameters:
       The Snyk command to call, i.e. "test" or "iac test"
     type: string
     default: "test"
+  monitor-command:
+    description: >
+      The Snyk monitoring command to call, i.e. "monitor" or "container monitor"
+    type: string
+    default: "monitor"
   token-variable:
     description: >
       Name of env var containing your Snyk API token. Pass this as a raw string such as CICD_SNYK_TOKEN.
@@ -124,7 +129,7 @@ steps:
               SNYK_INTEGRATION_VERSION: REPLACE_ORB_VERSION
             command: >
               <<#parameters.test-only-param_dry-run-commands>>function capture() { echo "$@" | tee -a /tmp/dry-run-snyk-commands.txt; }; capture<</parameters.test-only-param_dry-run-commands>>
-              snyk monitor
+              snyk <<parameters.monitor-command>>
               <<#parameters.docker-image-name>>--docker <<parameters.docker-image-name>><</parameters.docker-image-name>>
               <<#parameters.project>>--project-name=<<parameters.project>><</parameters.project>>
               <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
