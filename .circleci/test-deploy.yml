@@ -58,6 +58,56 @@ commands:
             test-only-param_fail-on-no-cache-used: << parameters.test-only-param_fail-on-no-cache-used >>
             test-only-param_dry-run-commands: << parameters.test-only-param_dry-run-commands >>
 
+  container-scan:
+    description: test the scan functionality on containers
+    parameters:
+      fail-on-issues:
+        type: boolean
+        default: false
+      monitor-on-build:
+        type: boolean
+        default: false
+      no-cache:
+        type: boolean
+        default: false
+      additional-arguments:
+        type: string
+        default: ''
+      additional-monitor-arguments:
+        type: string
+        default: ''
+
+      test-only-param_fail-on-no-cache-used:
+        type: boolean
+        default: false
+      test-only-param_dry-run-commands:
+        type: boolean
+        default: false
+
+    steps:
+      - setup_remote_docker
+
+      - run:
+          name: Setup test repository
+          command: |
+            git clone https://github.com/snyk-labs/nodejs-goof || echo "Repository already exists, no cloning needed."
+            cd nodejs-goof
+            docker build -t nodejs-goof .
+
+      - snyk/scan:
+          docker-image-name: nodejs-goof
+          command: container test
+          monitor-command: container monitor
+
+          fail-on-issues: << parameters.fail-on-issues >>
+          monitor-on-build: << parameters.monitor-on-build >>
+          no-cache: << parameters.no-cache >>
+          additional-arguments: << parameters.additional-arguments >>
+          additional-monitor-arguments: << parameters.additional-monitor-arguments >>
+
+          test-only-param_fail-on-no-cache-used: << parameters.test-only-param_fail-on-no-cache-used >>
+          test-only-param_dry-run-commands: << parameters.test-only-param_dry-run-commands >>
+
   validate-dry-run-commands:
     description: validation hook to test the output of commands run under dry-run mode
     parameters:
@@ -127,6 +177,18 @@ jobs:
             snyk test --severity-threshold=low --file=nodejs-goof/package.json --print-deps
             snyk monitor --file=nodejs-goof/package.json --print-deps --project-tags=component=pkg:github.com/snyk-labs/nodejs-goof
 
+  scan-container-test-and-monitor:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - container-scan:
+          test-only-param_dry-run-commands: true
+          monitor-on-build: true
+      - validate-dry-run-commands:
+          expected-commands: |
+            snyk container test --docker nodejs-goof --severity-threshold=low
+            snyk container monitor --docker nodejs-goof
+
 workflows:
   test-deploy:
     jobs:
@@ -156,6 +218,11 @@ workflows:
           filters: *filters
 
       - scan-test-monitor-additional-arguments:
+          context:
+            - hammerhead-snyk-orb-snyk-creds
+          filters: *filters
+
+      - scan-container-test-and-monitor:
           context:
             - hammerhead-snyk-orb-snyk-creds
           filters: *filters
