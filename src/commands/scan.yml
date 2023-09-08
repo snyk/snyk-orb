@@ -63,6 +63,10 @@ parameters:
     description: Refer to the Snyk CLI help page for information on additional arguments. These are passed only to the `snyk monitor` command.
     type: string
     default: ""
+  file-output-argument:
+    description: Refer to the Snyk CLI help page for supported output arguments. This parameter will not be used by the `synk monitor` command.
+    type: string
+    default: ""
   no-cache:
     description: >
       Disable caching the Snyk CLI
@@ -73,6 +77,7 @@ parameters:
     type: enum
     enum: ["linux", "macos", "alpine"]
     default: "linux"
+
   install-alpine-dependencies:
     description: Install additional dependencies required by the alpine cli
     type: boolean
@@ -116,6 +121,7 @@ steps:
         <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
         <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
         <<parameters.additional-arguments>>
+        <<parameters.file-output-argument>>
         <<^parameters.fail-on-issues>> || true<</parameters.fail-on-issues>>
       no_output_timeout: "<<parameters.no-output-timeout>>"
   # snyk monitor

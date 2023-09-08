@@ -11,6 +11,10 @@ parameters:
       https://support.snyk.io/hc/en-us/articles/360003812578-CLI-reference
     type: string
     default: ""
+  file-output-argument:
+    description: Refer to the Snyk CLI help page for supported output arguments. This parameter will not be used by the `synk monitor` command.
+    type: string
+    default: ""
 
 steps:
   - checkout
@@ -18,3 +22,4 @@ steps:
       command: "iac test"
       additional-arguments: <<parameters.args>>
       monitor-on-build: false
+      file-output-argument: <<parameters.file-output-argument>>
