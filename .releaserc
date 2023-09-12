@@ -8,7 +8,10 @@
           {"type": "chore", "release": "patch"},
           {"type": "refactor", "release": "patch"},
           {"type": "style", "release": "patch"}
-        ]
+        ],
+        "parserOpts": {
+          "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
+        }
       }
     ],
     [
