@@ -10,4 +10,5 @@ usage:
   workflows:
     test:
       jobs:
-        - snyk/scan-iac
+        - snyk/scan:
+            command: iac test
