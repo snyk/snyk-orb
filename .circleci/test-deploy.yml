@@ -13,6 +13,9 @@ commands:
   scan:
     description: test the scan functionality
     parameters:
+      os:
+        type: string
+        default: 'linux'
       fail-on-issues:
         type: boolean
         default: false
@@ -49,6 +52,7 @@ commands:
         - snyk/scan:
             target-file: nodejs-goof/package.json
 
+            os: << parameters.os >>
             fail-on-issues: << parameters.fail-on-issues >>
             monitor-on-build: << parameters.monitor-on-build >>
             no-cache: << parameters.no-cache >>
@@ -163,6 +167,27 @@ jobs:
       - scan:
           no-cache: true
 
+  scan-test-os-specified:
+    docker:
+      - image: cimg/base:current
+    parameters:
+      resource_class:
+        type: string
+    resource_class: << parameters.resource_class >>
+    steps:
+      - when:
+          condition:
+            equal: [ arm.medium, << parameters.resource_class >> ]
+          steps:
+            - scan:
+                os: "linux-arm64"
+      - when:
+          condition:
+            equal: [ medium, << parameters.resource_class >> ]
+          steps:
+            - scan:
+                os: "linux"
+
   scan-test-monitor-additional-arguments:
     docker:
       - image: cimg/base:current
@@ -203,6 +228,14 @@ workflows:
           filters: *filters
 
       - scan-test-no-cache:
+          context:
+            - hammerhead-snyk-orb-snyk-creds
+          filters: *filters
+
+      - scan-test-os-specified:
+          matrix:
+            parameters:
+              resource_class: ["medium", "arm.medium"]
           context:
             - hammerhead-snyk-orb-snyk-creds
           filters: *filters
