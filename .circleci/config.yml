@@ -139,7 +139,7 @@ workflows:
           name: Scan repository for secrets
           context:
             - snyk-bot-slack
-          channel: hammerhead-alerts
+          channel: cli-alerts
       - orb-tools/pack:
           orb_dir: packed
           orb_file_name: orb.yml
