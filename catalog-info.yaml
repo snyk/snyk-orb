@@ -4,8 +4,8 @@ metadata:
   name: snyk-orb
   annotations:
     github.com/project-slug: snyk/snyk-orb
-    github.com/team-slug: snyk/hammerhead
+    github.com/team-slug: snyk/cli
 spec:
   type: supply-chain-tooling
   lifecycle: "-"
-  owner: hammerhead
+  owner: cli
