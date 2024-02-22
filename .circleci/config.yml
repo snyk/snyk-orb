@@ -1,7 +1,7 @@
 version: 2.1
 setup: true
 orbs:
-  prodsec: snyk/prodsec-orb@1.0
+  prodsec: snyk/prodsec-orb@1
   orb-tools: circleci/orb-tools@12.0.3
   node: circleci/node@5.1.0
 
@@ -58,6 +58,15 @@ commands:
             echo npx version: $(npx --version)
 
 jobs:
+  security-scans:
+    resource_class: small
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - prodsec/security_scans:
+          mode: auto
+
   # This deploys a dev version
   deploy-to-dev:
     <<: *defaults
@@ -140,6 +149,9 @@ workflows:
           context:
             - snyk-bot-slack
           channel: cli-alerts
+      - security-scans:
+          context: devex_cli
+
       - orb-tools/pack:
           orb_dir: packed
           orb_file_name: orb.yml
