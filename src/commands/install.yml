@@ -74,8 +74,8 @@ steps:
         then
           SNYK_CLI_VERSION=$(cat "/tmp/.snyk-version")
           echo "Downloading Snyk CLI version ${SNYK_CLI_VERSION}"
-          curl -O --compressed --retry 6 --retry-all-errors https://downloads.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>> || curl -O --compressed --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>
-          curl -O --compressed --retry 6 --retry-all-errors https://downloads.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>.sha256 || curl -O --compressed --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>.sha256
+          curl -O --compressed --retry 6 --retry-all-errors https://downloads.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>?utm_source=CIRCLECI_ORB || curl -O --compressed --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>
+          curl -O --compressed --retry 6 --retry-all-errors https://downloads.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>.sha256?utm_source=CIRCLECI_ORB || curl -O --compressed --retry 6 https://static.snyk.io/cli/v${SNYK_CLI_VERSION}/snyk-<<parameters.os>>.sha256
           sha256sum -c snyk-<<parameters.os>>.sha256
           sudo mv snyk-<<parameters.os>> /tmp/snyk
           sudo chmod +x /tmp/snyk
