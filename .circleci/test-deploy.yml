@@ -28,6 +28,9 @@ commands:
       additional-arguments:
         type: string
         default: ''
+      additional-test-arguments:
+        type: string
+        default: ''
       additional-monitor-arguments:
         type: string
         default: ''
@@ -57,6 +60,7 @@ commands:
             monitor-on-build: << parameters.monitor-on-build >>
             no-cache: << parameters.no-cache >>
             additional-arguments: << parameters.additional-arguments >>
+            additional-test-arguments: << parameters.additional-test-arguments >>
             additional-monitor-arguments: << parameters.additional-monitor-arguments >>
 
             test-only-param_fail-on-no-cache-used: << parameters.test-only-param_fail-on-no-cache-used >>
@@ -75,6 +79,9 @@ commands:
         type: boolean
         default: false
       additional-arguments:
+        type: string
+        default: ''
+      additional-test-arguments:
         type: string
         default: ''
       additional-monitor-arguments:
@@ -107,6 +114,7 @@ commands:
           monitor-on-build: << parameters.monitor-on-build >>
           no-cache: << parameters.no-cache >>
           additional-arguments: << parameters.additional-arguments >>
+          additional-test-arguments: << parameters.additional-test-arguments >>
           additional-monitor-arguments: << parameters.additional-monitor-arguments >>
 
           test-only-param_fail-on-no-cache-used: << parameters.test-only-param_fail-on-no-cache-used >>
@@ -195,11 +203,12 @@ jobs:
       - scan:
           test-only-param_dry-run-commands: true
           additional-arguments: "--print-deps"
+          additional-test-arguments: "--json-file-output=./results"
           additional-monitor-arguments: "--project-tags=component=pkg:github.com/snyk-labs/nodejs-goof"
           monitor-on-build: true
       - validate-dry-run-commands:
           expected-commands: |
-            snyk test --severity-threshold=low --file=nodejs-goof/package.json --print-deps
+            snyk test --severity-threshold=low --file=nodejs-goof/package.json --print-deps --json-file-output=./results
             snyk monitor --file=nodejs-goof/package.json --print-deps --project-tags=component=pkg:github.com/snyk-labs/nodejs-goof
 
   scan-container-test-and-monitor:

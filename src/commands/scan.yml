@@ -59,6 +59,10 @@ parameters:
     description: Refer to the Snyk CLI help page for information on additional arguments.
     type: string
     default: ""
+  additional-test-arguments:
+    description: Refer to the Snyk CLI help page for information on additional arguments. These are passed only to the `snyk test` command.
+    type: string
+    default: ""
   additional-monitor-arguments:
     description: Refer to the Snyk CLI help page for information on additional arguments. These are passed only to the `snyk monitor` command.
     type: string
@@ -116,6 +120,7 @@ steps:
         <<#parameters.organization>>--org=<<parameters.organization>><</parameters.organization>>
         <<#parameters.target-file>>--file=<<parameters.target-file>><</parameters.target-file>>
         <<parameters.additional-arguments>>
+        <<parameters.additional-test-arguments>>
         <<^parameters.fail-on-issues>> || true<</parameters.fail-on-issues>>
       no_output_timeout: "<<parameters.no-output-timeout>>"
   # snyk monitor
