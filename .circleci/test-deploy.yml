@@ -11,7 +11,7 @@ filters: &filters
 
 commands:
   scan:
-    description: test the scan functionality
+    description: Test the scan functionality
     parameters:
       os:
         type: string
@@ -63,7 +63,7 @@ commands:
             test-only-param_dry-run-commands: << parameters.test-only-param_dry-run-commands >>
 
   container-scan:
-    description: test the scan functionality on containers
+    description: Test the scan functionality on containers
     parameters:
       fail-on-issues:
         type: boolean
@@ -113,7 +113,7 @@ commands:
           test-only-param_dry-run-commands: << parameters.test-only-param_dry-run-commands >>
 
   validate-dry-run-commands:
-    description: validation hook to test the output of commands run under dry-run mode
+    description: Validation hook to test the output of commands run under dry-run mode
     parameters:
       expected-commands:
         type: string

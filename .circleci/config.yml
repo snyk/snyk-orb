@@ -18,7 +18,7 @@ commands:
           name: Install CCI CLI
           command: |
             sudo curl -fLSs https://circle.ci/cli | sudo bash
-            # this succesfully installs the new cci CLI to /usr/local/bin/circleci
+            # this successfully installs the new cci CLI to /usr/local/bin/circleci
             # however, the orig (/usr/bin/circleci) remains in the path
             # so need to use the full path to circleci
   
@@ -142,7 +142,7 @@ jobs:
             fi
 
 workflows:
-  btd:
+  build-test-deploy:
     jobs:
       - prodsec/secrets-scan:
           name: Scan repository for secrets
@@ -165,23 +165,20 @@ workflows:
           vcs_type: github
           filters:
             branches:
-              ignore: master
+              ignore: main
       - deploy-to-dev:
           context:
-            - team-hammerhead-common-deploy-tokens
             - orb-publishing
           requires:
             - orb-tools/continue
           filters:
             branches:
-              ignore: master
-
+              ignore: main
       - prod-release:
           context:
-            - team-hammerhead-common-deploy-tokens
             - orb-publishing
           requires:
             - orb-tools/pack
           filters:
             branches:
-              only: master
+              only: main

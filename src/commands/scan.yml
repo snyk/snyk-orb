@@ -27,7 +27,7 @@ parameters:
     type: boolean
     default: true
   monitor-on-build:
-    description: Take a current application dependencies snapshot for continuous monitoring by Snyk, if test was succesful.
+    description: Take a current application dependencies snapshot for continuous monitoring by Snyk, if test was successful.
     type: boolean
     default: true
   target-file:
@@ -71,7 +71,7 @@ parameters:
   os:
     description: The CLI OS version to download
     type: enum
-    enum: ["linux", "macos", "alpine", "linux-arm64"]
+    enum: ["linux", "macos", "alpine", "linux-arm64", "macos-arm64"]
     default: "linux"
   install-alpine-dependencies:
     description: Install additional dependencies required by the alpine cli
