@@ -142,7 +142,7 @@ jobs:
             fi
 
 workflows:
-  btd:
+  build-test-deploy:
     jobs:
       - prodsec/secrets-scan:
           name: Scan repository for secrets
