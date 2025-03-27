@@ -165,7 +165,7 @@ workflows:
           vcs_type: github
           filters:
             branches:
-              ignore: master
+              ignore: main
       - deploy-to-dev:
           context:
             - team-hammerhead-common-deploy-tokens
@@ -174,7 +174,7 @@ workflows:
             - orb-tools/continue
           filters:
             branches:
-              ignore: master
+              ignore: main
 
       - prod-release:
           context:
@@ -184,4 +184,4 @@ workflows:
             - orb-tools/pack
           filters:
             branches:
-              only: master
+              only: main
