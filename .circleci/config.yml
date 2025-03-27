@@ -169,6 +169,7 @@ workflows:
       - deploy-to-dev:
           context:
             - orb-publishing
+            - team-hammerhead-common-deploy-tokens
           requires:
             - orb-tools/continue
           filters:
@@ -177,6 +178,7 @@ workflows:
       - prod-release:
           context:
             - orb-publishing
+            - team-hammerhead-common-deploy-tokens
           requires:
             - orb-tools/pack
           filters:
