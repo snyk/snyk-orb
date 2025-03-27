@@ -168,17 +168,14 @@ workflows:
               ignore: main
       - deploy-to-dev:
           context:
-            - team-hammerhead-common-deploy-tokens
             - orb-publishing
           requires:
             - orb-tools/continue
           filters:
             branches:
               ignore: main
-
       - prod-release:
           context:
-            - team-hammerhead-common-deploy-tokens
             - orb-publishing
           requires:
             - orb-tools/pack
