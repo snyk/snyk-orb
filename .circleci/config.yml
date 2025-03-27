@@ -18,7 +18,7 @@ commands:
           name: Install CCI CLI
           command: |
             sudo curl -fLSs https://circle.ci/cli | sudo bash
-            # this succesfully installs the new cci CLI to /usr/local/bin/circleci
+            # this successfully installs the new cci CLI to /usr/local/bin/circleci
             # however, the orig (/usr/bin/circleci) remains in the path
             # so need to use the full path to circleci
   
