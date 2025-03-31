@@ -3,7 +3,10 @@
 ## The Snyk Orb
 
 Use the Snyk orb to easily incorporate [Snyk](https://snyk.co/udBRL) into your CircleCI Workflows.
-By utilizing this orb in your project workflow, it is possible to use Snyk to test, fix and monitor your project for vulnerabilities in the app dependencies and Docker images, all with a single command. You can set thresholds for vulnerability tolerance in your app or Docker image (and fail the workflows when threshold is exceeded), apply proprietary Snyk patches, and save dependency snapshots on snyk.io for continuous monitoring and alerting.
+By utilizing this orb in your project workflow, it is possible to use Snyk to test, fix and monitor your project for
+vulnerabilities in the app dependencies and Docker images, all with a single command. You can set thresholds for
+vulnerability tolerance in your app or Docker image (and fail the workflows when threshold is exceeded), apply
+proprietary Snyk patches, and save dependency snapshots on snyk.io for continuous monitoring and alerting.
 
 ## How to use the Snyk Orb
 
@@ -15,7 +18,7 @@ All you need to do is:
    to enable usage of Orbs in your project workflow
 2. Set up an environment variable (`SNYK_TOKEN`) with your Snyk API token, which
    you can get from your account in your Snyk instance
-   - Optionally, you can set your API endpoint with `SNYK_API` if it differs from the default (https://snyk.io/)
+    - Optionally, you can set your API endpoint with `SNYK_API` if it differs from the default (https://snyk.io/)
 3. In the app build job, call the `snyk/scan`
 4. Optionally, supply parameters to customize orb behaviour
 
@@ -30,13 +33,13 @@ orbs:
   snyk: snyk/snyk@x.y.z
 
 jobs:
- build:
-   docker:
-     - image: circleci/node:4.8.2
-   steps:
-     - checkout
-     - run: npm install -q
-     - snyk/scan
+  build:
+    docker:
+      - image: circleci/node:4.8.2
+    steps:
+      - checkout
+      - run: npm install -q
+      - snyk/scan
 ```
 
 ### Scan Docker Image
@@ -52,7 +55,7 @@ jobs:
     environment:
       IMAGE_NAME: myrepo/myapp
     docker:
-        - image: circleci/buildpack-deps:stretch
+      - image: circleci/buildpack-deps:stretch
     steps:
       - checkout
       - setup_remote_docker
@@ -76,19 +79,19 @@ orbs:
 jobs:
   build:
     docker:
-    - image: circleci/node:4.8.2
+      - image: circleci/node:4.8.2
     steps:
-    - checkout
-    - run:
-        command: npm install -q
-    - snyk/scan:
-        token-variable: CICD_SNYK_TOKEN                           # use is api token stored in an env variable named other than SNYK_TOKEN
-        severity-threshold: high                                  # only fail if detected high-severity vulnerabilities
-        fail-on-issues: false                                     # don't fail even if issues detected (not recommended!)
-        monitor-on-build: true                                    # create a snapshot of apps dependencies on snyk.io, for continoues monitoring (recommended!)
-        project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-app  # use this to save the snapshot under specific names.
-        organization: ${SNYK_CICD_ORGANIZATION}                   # save reports under a specific Snyk organization
-        no-output-timeout: 20m                                    # set timeout without output to 20 mins
+      - checkout
+      - run:
+          command: npm install -q
+      - snyk/scan:
+          token-variable: CICD_SNYK_TOKEN                           # use is api token stored in an env variable named other than SNYK_TOKEN
+          severity-threshold: high                                  # only fail if detected high-severity vulnerabilities
+          fail-on-issues: false                                     # don't fail even if issues detected (not recommended!)
+          monitor-on-build: true                                    # create a snapshot of apps dependencies on snyk.io, for continoues monitoring (recommended!)
+          project: ${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-app  # use this to save the snapshot under specific names.
+          organization: ${SNYK_CICD_ORGANIZATION}                   # save reports under a specific Snyk organization
+          no-output-timeout: 20m                                    # set timeout without output to 20 mins
 ```
 
 ## Orb Parameters
@@ -108,6 +111,7 @@ Full reference docs https://circleci.com/orbs/registry/orb/snyk/snyk
 | organization                 | The Snyk Organization ID (see Organization-level Settings tab in the Snyk UI) under which this project should be tested and monitored. | no       | -          | string                                  |
 | project                      | A custom name for the Snyk project to be created on snyk.io                                                                            | no       | -          | string                                  |
 | additional-arguments         | Refer to the Snyk CLI help page for information on additional arguments. These are passed to all `snyk` commands.                      | no       | -          | string                                  |
+| additional-test-arguments    | Refer to the Snyk CLI help page for information on additional arguments. Theseq are passed to `snyk test`.                             | no       | -          | string                                  |
 | additional-monitor-arguments | Refer to the Snyk CLI help page for information on additional arguments. These are passed to `snyk monitor`.                           | no       | -          | string                                  |
 | os                           | The CLI OS version to download                                                                                                         | no       | linux      | linux \| linux-arm64 \| macos \| alpine |
 | install-alpine-dependencies  | For the alpine CLI, should extenral dependencies be installed                                                                          | no       | true       | boolean                                 |
