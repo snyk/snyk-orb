@@ -1,7 +1,6 @@
 version: 2.1
 orbs:
-  orb-tools: circleci/orb-tools@12.0
-  node: circleci/node@5.1.0
+  node: circleci/node@7.1.0
 
 # Use this tag to ensure test jobs always run,
 # even though the downstream publish job will only run on release tags.
@@ -219,17 +218,17 @@ workflows:
     jobs:
       - scan-test:
           context:
-            - hammerhead-snyk-orb-snyk-creds
+            - devex_cli_testing-snyk-orb-snyk-creds
           filters: *filters
 
       - scan-test-old-curl:
           context:
-            - hammerhead-snyk-orb-snyk-creds
+            - devex_cli_testing-snyk-orb-snyk-creds
           filters: *filters
 
       - scan-test-no-cache:
           context:
-            - hammerhead-snyk-orb-snyk-creds
+            - devex_cli_testing-snyk-orb-snyk-creds
           filters: *filters
 
       - scan-test-os-specified:
@@ -237,25 +236,25 @@ workflows:
             parameters:
               resource_class: ["medium", "arm.medium"]
           context:
-            - hammerhead-snyk-orb-snyk-creds
+            - devex_cli_testing-snyk-orb-snyk-creds
           filters: *filters
 
       - scan-test-old-curl-no-cache:
           context:
-            - hammerhead-snyk-orb-snyk-creds
+            - devex_cli_testing-snyk-orb-snyk-creds
           filters: *filters
 
       - scan-test-ensure-cache-used:
           context:
-            - hammerhead-snyk-orb-snyk-creds
+            - devex_cli_testing-snyk-orb-snyk-creds
           filters: *filters
 
       - scan-test-monitor-additional-arguments:
           context:
-            - hammerhead-snyk-orb-snyk-creds
+            - devex_cli_testing-snyk-orb-snyk-creds
           filters: *filters
 
       - scan-container-test-and-monitor:
           context:
-            - hammerhead-snyk-orb-snyk-creds
+            - devex_cli_testing-snyk-orb-snyk-creds
           filters: *filters

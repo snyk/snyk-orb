@@ -2,29 +2,51 @@ version: 2.1
 setup: true
 orbs:
   prodsec: snyk/prodsec-orb@1
-  orb-tools: circleci/orb-tools@12.0.3
-  node: circleci/node@5.1.0
+  orb-tools: circleci/orb-tools@12.3.1
 
 defaults: &defaults
   docker:
-    - image: cimg/base:current
+    - image: cimg/node:lts
   working_directory: ~/repo
 
 commands:
   install_cci_cli:
     description: Install the latest CircleCI CLI
     steps:
+      - restore_cache:
+          keys:
+            - cci-cli-v1-{{ arch }}-v1
       - run:
-          name: Install CCI CLI
+          name: Install a later version of CircleCI CLI
           command: |
-            sudo curl -fLSs https://circle.ci/cli | sudo bash
-            # this successfully installs the new cci CLI to /usr/local/bin/circleci
-            # however, the orig (/usr/bin/circleci) remains in the path
-            # so need to use the full path to circleci
-  
-            which /usr/local/bin/circleci
-            /usr/local/bin/circleci version
-            /usr/local/bin/circleci
+            if [[ ! -f /usr/local/bin/circleci ]]; then
+              sudo curl -fLSs https://circle.ci/cli | sudo bash
+            fi
+            echo 'export PATH=/usr/local/bin:$PATH' >> $BASH_ENV
+            source $BASH_ENV
+            circleci version
+      - save_cache:
+          paths:
+            - /usr/local/bin/circleci
+          key: cci-cli-v1-{{ arch }}-v1
+
+  install_semantic_release:
+    description: Install and cache semantic-release globally
+    steps:
+      - restore_cache:
+          keys:
+            - semantic-release-v24.2.3
+      - run:
+          name: Install semantic-release globally
+          command: |
+            if ! command -v semantic-release &> /dev/null; then
+              npm install -g semantic-release@24.2.3
+            fi
+      - save_cache:
+          paths:
+            - /usr/local/bin/semantic-release
+            - /usr/local/lib/node_modules/semantic-release
+          key: semantic-release-v24.2.3
 
   untar_orb:
     description: Untar the orb
@@ -43,25 +65,12 @@ commands:
     description: Run semantic-release in --dry-run mode to capture info about next release version
     steps:
       - run:
-          name: Run semantic release in dry-run mode
-          command: |
-            npx -p @semantic-release/git@10.0.1 -p semantic-release@21.0.2 semantic-release --branches ${CIRCLE_BRANCH} --dry-run > sem-rel-dry-run.txt
-            cat sem-rel-dry-run.txt
-
-  check_node:
-    description: Check node environment
-    steps:
-      - run:
-          name: Check Node environment
-          command: |
-            echo node version: $(node --version)
-            echo npx version: $(npx --version)
+          name: Run semantic release dry-run
+          command: semantic-release --branches ${CIRCLE_BRANCH} --dry-run > sem-rel-dry-run.txt
 
 jobs:
   security-scans:
-    resource_class: small
-    docker:
-      - image: cimg/base:stable
+    <<: *defaults
     steps:
       - checkout
       - prodsec/security_scans:
@@ -74,46 +83,38 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/repo
-      - node/install
-      - check_node
+      - install_semantic_release
       - semantic_release_dry_run
-      - install_cci_cli
       - untar_orb
+      - install_cci_cli
       - run:
           name: Deploy dev version of Orb
           command: |
             dev_orb_ref="snyk/snyk@dev:${CIRCLE_BRANCH}"
             echo "dev_orb_ref: ${dev_orb_ref}"
-            ls -Rl 
-            /usr/local/bin/circleci orb publish packed/orb.yml $dev_orb_ref --token ${CIRCLE_TOKEN}
+            circleci orb publish packed/orb.yml $dev_orb_ref --token ${CIRCLE_TOKEN}
 
   # This deploys a prod version with the REPLACE_ORB_VERSION rendered in the actualy Orb yaml
   # and uses semantic-release to handle the versioning.
   # It bases the new version of the latest git tag and the usual fix/feat/chore commit message prefixes
   # and will set a new tag in the repo.
-  prod-release:
+  deploy-to-prod-and-release:
     <<: *defaults
     steps:
       - checkout
       - attach_workspace:
           at: ~/repo
-      - run:
-          name: See files after attach_workspace
-          command: |
-            ls -la
-      - node/install
-      - check_node
       - install_cci_cli
       - untar_orb
       - run:
           name: See the packed Orb # make sure it's here because of the attach_workspace
-          command: |
-            cat packed/orb.yml
+          command: cat packed/orb.yml
       - run:
           name: Add github.com to known_hosts # Because without this sometime you get errors connecting to GitHub (for writing the tag)
           command: |
             mkdir -p ~/.ssh
             ssh-keyscan github.com > ~/.ssh/known_hosts
+      - install_semantic_release
       - semantic_release_dry_run
       - run:
           name: Update Version and Release
@@ -132,10 +133,10 @@ jobs:
               echo "prod_orb_ref: ${prod_orb_ref}"
 
               # Set tag in GitHub
-              npx -p @semantic-release/git@10.0.1 -p semantic-release@21.0.2 semantic-release --branches ${CIRCLE_BRANCH}
+              semantic-release --branches ${CIRCLE_BRANCH}
 
               # publish production version (needs different token)
-              /usr/local/bin/circleci orb publish packed/orb.yml $prod_orb_ref --token ${CIRCLE_TOKEN}
+              circleci orb publish packed/orb.yml $prod_orb_ref --token ${CIRCLE_TOKEN}
 
             else
               echo "Don't do release"
@@ -151,7 +152,6 @@ workflows:
           channel: cli-alerts
       - security-scans:
           context: devex_cli
-
       - orb-tools/pack:
           orb_dir: packed
           orb_file_name: orb.yml
@@ -175,7 +175,7 @@ workflows:
           filters:
             branches:
               ignore: main
-      - prod-release:
+      - deploy-to-prod-and-release:
           context:
             - orb-publishing
             - team-hammerhead-common-deploy-tokens
