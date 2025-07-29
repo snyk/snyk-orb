@@ -35,7 +35,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: circleci/node:4.8.2
+      - image: cimg/node:lts
     steps:
       - checkout
       - run: npm install -q
@@ -79,7 +79,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: circleci/node:4.8.2
+      - image: cimg/node:lts
     steps:
       - checkout
       - run:
