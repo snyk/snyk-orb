@@ -154,6 +154,7 @@ workflows:
       - security-scans:
           context:
             - devex_cli
+            - endpoint-experience
             - prodsec-orb-runtime
       - orb-tools/pack:
           orb_dir: packed
